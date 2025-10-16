@@ -1,8 +1,9 @@
-import type { Express } from "express";
+import type { Express, Request } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { registerUser, loginUser } from "./auth";
 import { seedDatabase } from "./seed-endpoint";
+import { requireAuth, requireAdmin, requireSelfOrAdmin } from "./middleware";
 import { insertLessonSchema, insertTrackSchema, insertContributionSchema } from "@shared/schema";
 import type { Question } from "@shared/schema";
 
@@ -22,7 +23,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { username, email, password } = req.body;
       const user = await registerUser(username, email, password);
-      res.json(user);
+      
+      req.session.regenerate((err) => {
+        if (err) {
+          return res.status(500).json({ error: "Session creation failed" });
+        }
+        req.session.userId = user.id;
+        req.session.save((err) => {
+          if (err) {
+            return res.status(500).json({ error: "Session save failed" });
+          }
+          res.json(user);
+        });
+      });
     } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
@@ -32,9 +45,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { email, password } = req.body;
       const user = await loginUser(email, password);
-      res.json(user);
+      
+      req.session.regenerate((err) => {
+        if (err) {
+          return res.status(500).json({ error: "Session creation failed" });
+        }
+        req.session.userId = user.id;
+        req.session.save((err) => {
+          if (err) {
+            return res.status(500).json({ error: "Session save failed" });
+          }
+          res.json(user);
+        });
+      });
     } catch (error: any) {
       res.status(401).json({ error: error.message });
+    }
+  });
+
+  app.post("/api/auth/logout", requireAuth, async (req, res) => {
+    req.session.destroy((err) => {
+      if (err) {
+        return res.status(500).json({ error: "Logout failed" });
+      }
+      res.json({ message: "Logged out successfully" });
+    });
+  });
+
+  app.get("/api/auth/me", requireAuth, async (req, res) => {
+    try {
+      const user = await storage.getUser(req.session.userId!);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      res.json({
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        xp: user.xp,
+        level: user.level,
+        streak: user.streak,
+        isAdmin: user.isAdmin,
+      });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
     }
   });
 
@@ -60,7 +114,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/tracks", async (req, res) => {
+  app.post("/api/tracks", requireAdmin, async (req, res) => {
     try {
       const validated = insertTrackSchema.parse(req.body);
       const track = await storage.createTrack(validated);
@@ -92,7 +146,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/lessons", async (req, res) => {
+  app.post("/api/lessons", requireAdmin, async (req, res) => {
     try {
       const validated = insertLessonSchema.parse(req.body);
       const lesson = await storage.createLesson(validated);
@@ -103,14 +157,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // User Progress
-  app.post("/api/lessons/:lessonId/complete", async (req, res) => {
+  app.post("/api/lessons/:lessonId/complete", requireAuth, async (req, res) => {
     try {
-      const { userId, score, vocabularyUpdates } = req.body;
+      const userId = req.session.userId!;
+      const { score, vocabularyUpdates } = req.body;
       const lessonId = req.params.lessonId;
-
-      if (!userId) {
-        return res.status(400).json({ error: "userId is required" });
-      }
 
       const lesson = await storage.getLesson(lessonId);
       if (!lesson) {
@@ -186,7 +237,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Vocabulary
-  app.get("/api/users/:userId/vocabulary", async (req, res) => {
+  app.get("/api/users/:userId/vocabulary", requireSelfOrAdmin, async (req, res) => {
     try {
       const vocabulary = await storage.getUserVocabulary(req.params.userId);
       res.json(vocabulary);
@@ -205,7 +256,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/users/:userId/badges", async (req, res) => {
+  app.get("/api/users/:userId/badges", requireSelfOrAdmin, async (req, res) => {
     try {
       const userBadges = await storage.getUserBadges(req.params.userId);
       res.json(userBadges);
@@ -236,9 +287,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/contributions", async (req, res) => {
+  app.post("/api/contributions", requireAuth, async (req, res) => {
     try {
-      const validated = insertContributionSchema.parse(req.body);
+      const userId = req.session.userId!;
+      const validated = insertContributionSchema.parse({
+        ...req.body,
+        contributorId: userId,
+      });
       const contribution = await storage.createContribution(validated);
       res.json(contribution);
     } catch (error: any) {
@@ -246,7 +301,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.patch("/api/contributions/:id", async (req, res) => {
+  app.patch("/api/contributions/:id", requireAdmin, async (req, res) => {
     try {
       const { status, reviewerComment, reviewedBy } = req.body;
       const contribution = await storage.updateContribution(req.params.id, {
@@ -278,7 +333,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Streaks
-  app.post("/api/users/:userId/streak", async (req, res) => {
+  app.post("/api/users/:userId/streak", requireSelfOrAdmin, async (req, res) => {
     try {
       const { streak, lastActiveDate } = req.body;
       const user = await storage.updateUserStreak(req.params.userId, streak, lastActiveDate);
@@ -289,13 +344,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // User
-  app.get("/api/users/:userId", async (req, res) => {
+  app.get("/api/users/:userId", requireSelfOrAdmin, async (req, res) => {
     try {
       const user = await storage.getUser(req.params.userId);
       if (!user) {
         return res.status(404).json({ error: "User not found" });
       }
-      res.json(user);
+      const { password, ...userWithoutPassword } = user;
+      res.json(userWithoutPassword);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
     }

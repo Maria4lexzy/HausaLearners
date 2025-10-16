@@ -71,6 +71,13 @@ LingoQuest is a community-driven, gamified language learning platform where user
 
 ## API Endpoints
 
+### Authentication
+- `POST /api/auth/register` - Register new user (username, email, password)
+- `POST /api/auth/login` - Login user (email, password)
+
+### Database Management
+- `POST /api/seed` - Initialize database with sample tracks, lessons, and badges
+
 ### Tracks
 - `GET /api/tracks` - List all tracks
 - `GET /api/tracks/:id` - Get single track
@@ -125,15 +132,87 @@ LingoQuest is a community-driven, gamified language learning platform where user
 3. Created comprehensive API routes for all features
 4. Set up database storage layer with TypeScript interfaces
 5. Designed gamification algorithms (XP calculation, memory strength scoring)
+6. **Authentication System**: Implemented bcrypt password hashing with registration/login endpoints
+7. **API Integration Layer**: Created React Query hooks in `client/src/lib/api.ts` for all endpoints
+8. **User Context**: Added `UserProvider` for client-side user state management
+9. **Database Seeding**: Created `/api/seed` endpoint for initial data population
 
 ## User Preferences
 - Modern, playful design inspired by Duolingo and Boot.dev
 - Community-first approach - users can contribute without coding
 - Free tier compatible - zero startup costs for modest usage
 
+## Getting Started
+
+### Initial Setup
+1. Application auto-starts with `npm run dev` on port 5000
+2. Database schema is already migrated and ready
+3. **Seed initial data**: 
+   ```bash
+   curl -X POST http://localhost:5000/api/seed
+   ```
+4. **Create a user account**:
+   ```bash
+   curl -X POST http://localhost:5000/api/auth/register \
+     -H "Content-Type: application/json" \
+     -d '{"username":"demo","email":"demo@example.com","password":"password123"}'
+   ```
+5. Navigate to the app and start learning!
+
+### Current Implementation Status
+**✅ Complete:**
+- Database schema with all tables migrated
+- Full backend API with session-based authentication
+  - Bcrypt password hashing (SALT_ROUNDS=10)
+  - Express-session with secure cookies (httpOnly, sameSite: lax)
+  - Session regeneration on login/register (prevents fixation)
+  - Authorization middleware (requireAuth, requireAdmin, requireSelfOrAdmin)
+  - CSRF protection via sameSite cookies
+- Beautiful, polished frontend components
+- Gamification logic (XP, streaks, badges)
+- Vocabulary tracking with memory strength
+- Contribution and admin workflows
+- React Query integration hooks
+
+**🔄 Next Integration Phase:**
+- Wire frontend components to use real API data (replace mock data)
+- Add loading/error states tied to live queries
+- Implement client-side session management
+- Test end-to-end user flows
+
+**⚠️ CRITICAL - Production Requirements (MUST be addressed before deployment):**
+
+1. **Session Secret (CRITICAL):**
+   - Current: Falls back to hard-coded secret in development
+   - Required: Set strong SESSION_SECRET environment variable
+   - Action: Generate with `openssl rand -base64 32` and add to production env
+   - Risk: Predictable cookies enable session hijacking
+
+2. **Session Store (CRITICAL):**
+   - Current: MemoryStore (dev only - crashes lose all sessions)
+   - Required: Use connect-pg-simple (Postgres) or Redis
+   - Action: Install and configure persistent session storage
+   - Risk: Session loss, memory leaks, single-process limitation
+
+3. **CSRF Protection (RECOMMENDED):**
+   - Current: sameSite: "lax" cookies (good baseline)
+   - Enhanced: Add CSRF tokens with `csurf` middleware
+   - Action: Implement double-submit cookie or rotating tokens
+   - Risk: Protection gap for mobile apps or future OAuth flows
+
+4. **HTTPS Only (PRODUCTION):**
+   - Ensure all traffic is HTTPS in production
+   - Cookie secure flag is already configured to activate in production
+
+**Development vs Production:**
+- Current implementation is secure for development and MVP testing
+- Production deployment requires the above hardening steps
+- All security patterns (bcrypt, session regeneration, authorization) are production-ready
+- Only session infrastructure (secret + store) needs production upgrade
+
 ## Known Limitations
-- Database seeding requires manual execution due to SSL certificate configuration
-- Admin features require manual user role assignment in database
+- Frontend currently uses mock data for demonstration (API integration hooks ready but not wired to components)
+- Admin features require manual user role assignment in database (`isAdmin` column)
 - Audio files stored as URLs (not uploaded to Supabase Storage yet)
 
 ## Next Steps (Post-MVP)
