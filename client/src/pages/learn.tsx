@@ -69,11 +69,16 @@ export default function Learn() {
 
   // Complete lesson mutation
   const completeLessonMutation = useMutation({
-    mutationFn: async ({ lessonId, score, vocabularyIds }: { lessonId: string; score: number; vocabularyIds: number[] }) => {
-      await apiRequest("POST", `/api/lessons/${lessonId}/complete`, { score, vocabularyIds });
+    mutationFn: async ({ lessonId, score, vocabularyUpdates }: { 
+      lessonId: string; 
+      score: number; 
+      vocabularyUpdates: Array<{ word: string; translation: string; correct: boolean; examplePhrase?: string }> 
+    }) => {
+      await apiRequest("POST", `/api/lessons/${lessonId}/complete`, { score, vocabularyUpdates });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/users", user?.id, "lessons"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/users", user?.id, "vocabulary"] });
       queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
       queryClient.invalidateQueries({ queryKey: ["/api/badges/user"] });
     },
@@ -110,15 +115,10 @@ export default function Learn() {
     if (!playingLesson) return;
 
     try {
-      // Extract vocabulary IDs if they exist in the vocabulary items
-      const vocabularyIds = vocabulary
-        .filter(v => v.id)
-        .map(v => v.id);
-
       await completeLessonMutation.mutateAsync({
         lessonId: playingLesson.id,
         score,
-        vocabularyIds,
+        vocabularyUpdates: vocabulary,
       });
 
       toast({

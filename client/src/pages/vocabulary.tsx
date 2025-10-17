@@ -4,65 +4,24 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
-import { Search, BookOpen } from "lucide-react";
+import { Search, BookOpen, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useQuery } from "@tanstack/react-query";
+import { useCurrentUser } from "@/lib/user-context";
+import type { Vocabulary } from "@shared/schema";
 
 export default function Vocabulary() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filter, setFilter] = useState<"all" | "known" | "fuzzy" | "forgotten">("all");
   const { toast } = useToast();
+  const { user } = useCurrentUser();
 
-  const mockVocabulary = [
-    {
-      id: "1",
-      word: "Hola",
-      translation: "Hello",
-      examplePhrase: "Hola, ¿cómo estás?",
-      memoryStrength: "Known" as const,
-      lastReviewedAt: "2025-01-20T10:00:00Z",
-    },
-    {
-      id: "2",
-      word: "Buenos días",
-      translation: "Good day",
-      examplePhrase: "Buenos días, señora.",
-      memoryStrength: "Known" as const,
-      lastReviewedAt: "2025-01-20T09:30:00Z",
-    },
-    {
-      id: "3",
-      word: "Gracias",
-      translation: "Thank you",
-      examplePhrase: "Muchas gracias por tu ayuda.",
-      memoryStrength: "Fuzzy" as const,
-      lastReviewedAt: "2025-01-18T14:20:00Z",
-    },
-    {
-      id: "4",
-      word: "Adiós",
-      translation: "Goodbye",
-      examplePhrase: "Adiós, hasta luego.",
-      memoryStrength: "Known" as const,
-      lastReviewedAt: "2025-01-19T16:45:00Z",
-    },
-    {
-      id: "5",
-      word: "Por favor",
-      translation: "Please",
-      examplePhrase: "¿Puedes ayudarme, por favor?",
-      memoryStrength: "Forgotten" as const,
-      lastReviewedAt: "2025-01-15T11:10:00Z",
-    },
-    {
-      id: "6",
-      word: "Rojo",
-      translation: "Red",
-      memoryStrength: "Fuzzy" as const,
-      lastReviewedAt: "2025-01-17T13:30:00Z",
-    },
-  ];
+  const { data: vocabulary = [], isLoading } = useQuery<Vocabulary[]>({
+    queryKey: ["/api/users", user?.id, "vocabulary"],
+    enabled: !!user,
+  });
 
-  const filteredVocabulary = mockVocabulary.filter(vocab => {
+  const filteredVocabulary = vocabulary.filter(vocab => {
     const matchesSearch = vocab.word.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          vocab.translation.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesFilter = filter === "all" || vocab.memoryStrength.toLowerCase() === filter;
@@ -70,10 +29,10 @@ export default function Vocabulary() {
   });
 
   const stats = {
-    total: mockVocabulary.length,
-    known: mockVocabulary.filter(v => v.memoryStrength === "Known").length,
-    fuzzy: mockVocabulary.filter(v => v.memoryStrength === "Fuzzy").length,
-    forgotten: mockVocabulary.filter(v => v.memoryStrength === "Forgotten").length,
+    total: vocabulary.length,
+    known: vocabulary.filter(v => v.memoryStrength === "Known").length,
+    fuzzy: vocabulary.filter(v => v.memoryStrength === "Fuzzy").length,
+    forgotten: vocabulary.filter(v => v.memoryStrength === "Forgotten").length,
   };
 
   const handlePractice = (vocab: any) => {
@@ -148,17 +107,24 @@ export default function Vocabulary() {
         </Tabs>
       </div>
 
-      {filteredVocabulary.length > 0 ? (
+      {isLoading ? (
+        <Card>
+          <CardContent className="flex min-h-64 flex-col items-center justify-center gap-2">
+            <Loader2 className="h-12 w-12 animate-spin text-primary" />
+            <p className="text-lg text-muted-foreground">Loading vocabulary...</p>
+          </CardContent>
+        </Card>
+      ) : filteredVocabulary.length > 0 ? (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {filteredVocabulary.map((vocab) => (
             <VocabularyCard
               key={vocab.id}
-              id={vocab.id}
+              id={vocab.id.toString()}
               word={vocab.word}
               translation={vocab.translation}
-              examplePhrase={vocab.examplePhrase}
-              memoryStrength={vocab.memoryStrength}
-              lastReviewedAt={vocab.lastReviewedAt}
+              examplePhrase={vocab.examplePhrase || undefined}
+              memoryStrength={vocab.memoryStrength as "Known" | "Fuzzy" | "Forgotten"}
+              lastReviewedAt={vocab.lastReviewedAt ? (typeof vocab.lastReviewedAt === 'string' ? vocab.lastReviewedAt : vocab.lastReviewedAt.toISOString()) : undefined}
               onPractice={() => handlePractice(vocab)}
             />
           ))}
