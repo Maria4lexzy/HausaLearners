@@ -1,19 +1,23 @@
 import { LeaderboardItem } from "@/components/leaderboard-item";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
-import { Trophy } from "lucide-react";
+import { Trophy, Loader2 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { useCurrentUser } from "@/lib/user-context";
+
+interface LeaderboardEntry {
+  id: string;
+  username: string;
+  xp: number;
+  level: number;
+}
 
 export default function Leaderboard() {
-  const mockLeaderboard = [
-    { rank: 1, username: "LanguageMaster", xp: 2450 },
-    { rank: 2, username: "PolyglotPro", xp: 2100 },
-    { rank: 3, username: "WordWizard", xp: 1850 },
-    { rank: 4, username: "Learner", xp: 350, isCurrentUser: true },
-    { rank: 5, username: "SpanishStar", xp: 1200 },
-    { rank: 6, username: "LinguaLion", xp: 980 },
-    { rank: 7, username: "VocabVault", xp: 875 },
-    { rank: 8, username: "GrammarGuru", xp: 750 },
-  ];
+  const { user } = useCurrentUser();
+  
+  const { data: leaderboard = [], isLoading } = useQuery<LeaderboardEntry[]>({
+    queryKey: ["/api/leaderboard"],
+  });
 
   return (
     <div className="space-y-6">
@@ -35,15 +39,33 @@ export default function Leaderboard() {
         </TabsList>
 
         <TabsContent value="global" className="space-y-4">
-          {mockLeaderboard.map((entry) => (
-            <LeaderboardItem
-              key={entry.rank}
-              rank={entry.rank}
-              username={entry.username}
-              xp={entry.xp}
-              isCurrentUser={entry.isCurrentUser}
-            />
-          ))}
+          {isLoading ? (
+            <Card>
+              <CardContent className="flex min-h-64 flex-col items-center justify-center gap-2">
+                <Loader2 className="h-12 w-12 animate-spin text-primary" />
+                <p className="text-lg text-muted-foreground">Loading leaderboard...</p>
+              </CardContent>
+            </Card>
+          ) : leaderboard.length > 0 ? (
+            leaderboard.map((entry, index) => (
+              <LeaderboardItem
+                key={entry.id}
+                rank={index + 1}
+                username={entry.username}
+                xp={entry.xp}
+                isCurrentUser={user?.id === entry.id}
+              />
+            ))
+          ) : (
+            <Card>
+              <CardContent className="flex min-h-64 flex-col items-center justify-center gap-2">
+                <Trophy className="h-12 w-12 text-muted-foreground" />
+                <p className="text-lg text-muted-foreground">
+                  No users on the leaderboard yet
+                </p>
+              </CardContent>
+            </Card>
+          )}
         </TabsContent>
 
         <TabsContent value="spanish">
