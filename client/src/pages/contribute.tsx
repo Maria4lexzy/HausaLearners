@@ -6,12 +6,16 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, X, Upload } from "lucide-react";
+import { Plus, X, Upload, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { apiRequest, queryClient } from "@/lib/queryClient";
+import { useCurrentUser } from "@/lib/user-context";
+import type { Track } from "@shared/schema";
 
 const trackSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -36,7 +40,14 @@ const lessonSchema = z.object({
 
 export default function Contribute() {
   const { toast } = useToast();
+  const { user } = useCurrentUser();
   const [questions, setQuestions] = useState<any[]>([]);
+
+  // Fetch tracks for lesson dropdown
+  const { data: tracks = [] } = useQuery<Track[]>({
+    queryKey: ["/api/tracks"],
+    enabled: !!user,
+  });
   const [currentQuestion, setCurrentQuestion] = useState({
     type: "multiple_choice",
     question: "",
@@ -99,12 +110,66 @@ export default function Contribute() {
     setQuestions(questions.filter((_, i) => i !== index));
   };
 
+  // Track contribution mutation
+  const createTrackMutation = useMutation({
+    mutationFn: async (data: z.infer<typeof trackSchema>) => {
+      await apiRequest("POST", "/api/contributions", {
+        type: "track",
+        data: data,
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/contributions"] });
+      toast({
+        title: "Track Submitted!",
+        description: "Your track has been submitted for review. Thank you for contributing!",
+      });
+      trackForm.reset();
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to submit track",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Lesson contribution mutation
+  const createLessonMutation = useMutation({
+    mutationFn: async (data: z.infer<typeof lessonSchema> & { questions: any[] }) => {
+      await apiRequest("POST", "/api/contributions", {
+        type: "lesson",
+        trackId: data.trackId,
+        data: {
+          title: data.title,
+          description: data.description,
+          difficulty: data.difficulty,
+          xpReward: data.xpReward,
+          questions: data.questions,
+        },
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/contributions"] });
+      toast({
+        title: "Lesson Submitted!",
+        description: "Your lesson has been submitted for review. Thank you for contributing!",
+      });
+      lessonForm.reset();
+      setQuestions([]);
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to submit lesson",
+        variant: "destructive",
+      });
+    },
+  });
+
   const onTrackSubmit = (data: z.infer<typeof trackSchema>) => {
-    toast({
-      title: "Track Submitted!",
-      description: "Your track has been submitted for review. Thank you for contributing!",
-    });
-    trackForm.reset();
+    createTrackMutation.mutate(data);
   };
 
   const onLessonSubmit = (data: z.infer<typeof lessonSchema>) => {
@@ -117,12 +182,7 @@ export default function Contribute() {
       return;
     }
 
-    toast({
-      title: "Lesson Submitted!",
-      description: "Your lesson has been submitted for review. Thank you for contributing!",
-    });
-    lessonForm.reset();
-    setQuestions([]);
+    createLessonMutation.mutate({ ...data, questions });
   };
 
   return (
@@ -182,9 +242,11 @@ export default function Contribute() {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="1">Basics</SelectItem>
-                            <SelectItem value="2">Travel</SelectItem>
-                            <SelectItem value="3">Food & Dining</SelectItem>
+                            {tracks.map((track) => (
+                              <SelectItem key={track.id} value={track.id}>
+                                {track.name}
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -371,8 +433,10 @@ export default function Contribute() {
                 onClick={lessonForm.handleSubmit(onLessonSubmit)}
                 className="w-full"
                 size="lg"
+                disabled={createLessonMutation.isPending}
                 data-testid="button-submit-lesson"
               >
+                {createLessonMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Submit Lesson for Review
               </Button>
             </CardContent>
@@ -436,7 +500,14 @@ export default function Contribute() {
                     )}
                   />
 
-                  <Button type="submit" className="w-full" size="lg" data-testid="button-submit-track">
+                  <Button 
+                    type="submit" 
+                    className="w-full" 
+                    size="lg" 
+                    disabled={createTrackMutation.isPending}
+                    data-testid="button-submit-track"
+                  >
+                    {createTrackMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                     Submit Track Proposal
                   </Button>
                 </form>

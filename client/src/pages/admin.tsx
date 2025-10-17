@@ -4,8 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { CheckCircle2, XCircle, Eye, Edit } from "lucide-react";
+import { CheckCircle2, XCircle, Eye, Edit, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { apiRequest, queryClient } from "@/lib/queryClient";
+import { useCurrentUser } from "@/lib/user-context";
+import type { Contribution } from "@shared/schema";
 import {
   Dialog,
   DialogContent,
@@ -18,61 +22,52 @@ import {
 
 export default function Admin() {
   const { toast } = useToast();
-  const [selectedContribution, setSelectedContribution] = useState<any>(null);
+  const { user } = useCurrentUser();
+  const [selectedContribution, setSelectedContribution] = useState<Contribution | null>(null);
   const [reviewComment, setReviewComment] = useState("");
 
-  const mockContributions = [
-    {
-      id: "1",
-      type: "lesson",
-      status: "pending",
-      contributorUsername: "TeacherTom",
-      data: {
-        title: "Weather Vocabulary",
-        description: "Learn words to describe weather conditions",
-        difficulty: "Medium",
-        trackName: "Basics",
-        questionCount: 8,
-      },
-      createdAt: "2025-01-20T14:30:00Z",
+  // Fetch all contributions
+  const { data: contributions = [], isLoading } = useQuery<Contribution[]>({
+    queryKey: ["/api/contributions"],
+    enabled: !!user?.isAdmin,
+  });
+
+  // Approve/reject mutation
+  const moderateMutation = useMutation({
+    mutationFn: async ({ id, status, comment }: { id: string; status: "approved" | "rejected"; comment: string }) => {
+      await apiRequest("PATCH", `/api/contributions/${id}`, {
+        status,
+        reviewerComment: comment,
+        reviewedBy: user?.id,
+      });
     },
-    {
-      id: "2",
-      type: "track",
-      status: "pending",
-      contributorUsername: "LinguaLearner",
-      data: {
-        name: "Business Spanish",
-        description: "Professional vocabulary and phrases for business settings",
-        language: "Spanish",
-      },
-      createdAt: "2025-01-20T10:15:00Z",
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/contributions"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/tracks"] });
+      setSelectedContribution(null);
+      setReviewComment("");
     },
-    {
-      id: "3",
-      type: "lesson",
-      status: "approved",
-      contributorUsername: "PolyglotPete",
-      data: {
-        title: "Shopping Essentials",
-        description: "Essential phrases for shopping and bargaining",
-        difficulty: "Easy",
-        trackName: "Travel",
-        questionCount: 6,
-      },
-      createdAt: "2025-01-19T16:20:00Z",
-      reviewedAt: "2025-01-20T09:00:00Z",
-      reviewerComment: "Excellent content! Approved.",
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to moderate contribution",
+        variant: "destructive",
+      });
     },
-  ];
+  });
 
   const handleApprove = (id: string) => {
-    toast({
-      title: "Contribution Approved",
-      description: "The contribution has been approved and is now live.",
-    });
-    setSelectedContribution(null);
-    setReviewComment("");
+    moderateMutation.mutate(
+      { id, status: "approved", comment: reviewComment },
+      {
+        onSuccess: () => {
+          toast({
+            title: "Contribution Approved",
+            description: "The contribution has been approved and is now live.",
+          });
+        },
+      }
+    );
   };
 
   const handleReject = (id: string) => {
@@ -85,16 +80,21 @@ export default function Admin() {
       return;
     }
 
-    toast({
-      title: "Contribution Rejected",
-      description: "The contributor has been notified.",
-    });
-    setSelectedContribution(null);
-    setReviewComment("");
+    moderateMutation.mutate(
+      { id, status: "rejected", comment: reviewComment },
+      {
+        onSuccess: () => {
+          toast({
+            title: "Contribution Rejected",
+            description: "The contributor has been notified.",
+          });
+        },
+      }
+    );
   };
 
-  const pendingContributions = mockContributions.filter(c => c.status === "pending");
-  const reviewedContributions = mockContributions.filter(c => c.status !== "pending");
+  const pendingContributions = contributions.filter(c => c.status === "pending");
+  const reviewedContributions = contributions.filter(c => c.status !== "pending");
 
   return (
     <div className="space-y-6">
@@ -121,7 +121,7 @@ export default function Admin() {
             <div className="space-y-1">
               <p className="text-sm text-muted-foreground">Approved Today</p>
               <p className="text-2xl font-bold text-success" data-testid="stat-approved">
-                {mockContributions.filter(c => c.status === "approved").length}
+                {contributions.filter(c => c.status === "approved").length}
               </p>
             </div>
           </CardContent>
@@ -131,7 +131,7 @@ export default function Admin() {
             <div className="space-y-1">
               <p className="text-sm text-muted-foreground">Total Contributors</p>
               <p className="text-2xl font-bold" data-testid="stat-contributors">
-                {new Set(mockContributions.map(c => c.contributorUsername)).size}
+                {new Set(contributions.map(c => c.contributorId)).size}
               </p>
             </div>
           </CardContent>
@@ -168,8 +168,7 @@ export default function Admin() {
                       </Badge>
                     </div>
                     <CardDescription className="mt-2">
-                      Submitted by {contribution.contributorUsername} •{" "}
-                      {new Date(contribution.createdAt).toLocaleDateString()}
+                      Submitted {new Date(contribution.createdAt).toLocaleDateString()}
                     </CardDescription>
                   </div>
                 </div>
@@ -182,13 +181,10 @@ export default function Admin() {
                   {contribution.type === "lesson" && (
                     <div className="flex flex-wrap gap-2">
                       <Badge variant="outline">
-                        Track: {contribution.data.trackName}
-                      </Badge>
-                      <Badge variant="outline">
                         {contribution.data.difficulty}
                       </Badge>
                       <Badge variant="outline">
-                        {contribution.data.questionCount} questions
+                        {contribution.data.questions?.length || 0} questions
                       </Badge>
                     </div>
                   )}
@@ -295,7 +291,6 @@ export default function Admin() {
                       </Badge>
                     </div>
                     <CardDescription className="mt-2">
-                      Submitted by {contribution.contributorUsername} •
                       Reviewed {new Date(contribution.reviewedAt || "").toLocaleDateString()}
                     </CardDescription>
                   </div>
