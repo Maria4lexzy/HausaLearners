@@ -3,8 +3,9 @@ import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
+import { AppHeader } from "@/components/app-header";
 import { ThemeProvider } from "@/components/theme-provider";
 import { UserProvider } from "@/lib/user-context";
 import Home from "@/pages/home";
@@ -13,49 +14,117 @@ import Vocabulary from "@/pages/vocabulary";
 import Leaderboard from "@/pages/leaderboard";
 import Contribute from "@/pages/contribute";
 import Admin from "@/pages/admin";
+import Login from "@/pages/auth/login";
+import Register from "@/pages/auth/register";
 import NotFound from "@/pages/not-found";
+import { useCurrentUser } from "@/lib/user-context";
+import { Redirect } from "wouter";
+
+function ProtectedRoute({ component: Component }: { component: React.ComponentType }) {
+  const { user, isLoading } = useCurrentUser();
+
+  if (isLoading) {
+    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+  }
+
+  if (!user) {
+    return <Redirect to="/auth/login" />;
+  }
+
+  return <Component />;
+}
+
+function AuthRoute({ component: Component }: { component: React.ComponentType }) {
+  const { user, isLoading } = useCurrentUser();
+
+  if (isLoading) {
+    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+  }
+
+  if (user) {
+    return <Redirect to="/" />;
+  }
+
+  return <Component />;
+}
 
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={Home} />
-      <Route path="/learn" component={Learn} />
-      <Route path="/vocabulary" component={Vocabulary} />
-      <Route path="/leaderboard" component={Leaderboard} />
-      <Route path="/contribute" component={Contribute} />
-      <Route path="/admin" component={Admin} />
+      <Route path="/auth/login">
+        <AuthRoute component={Login} />
+      </Route>
+      <Route path="/auth/register">
+        <AuthRoute component={Register} />
+      </Route>
+      <Route path="/">
+        <ProtectedRoute component={Home} />
+      </Route>
+      <Route path="/learn">
+        <ProtectedRoute component={Learn} />
+      </Route>
+      <Route path="/vocabulary">
+        <ProtectedRoute component={Vocabulary} />
+      </Route>
+      <Route path="/leaderboard">
+        <ProtectedRoute component={Leaderboard} />
+      </Route>
+      <Route path="/contribute">
+        <ProtectedRoute component={Contribute} />
+      </Route>
+      <Route path="/admin">
+        <ProtectedRoute component={Admin} />
+      </Route>
       <Route component={NotFound} />
     </Switch>
   );
 }
 
-function App() {
+function AppContent() {
+  const { user, isLoading } = useCurrentUser();
   const style = {
     "--sidebar-width": "16rem",
     "--sidebar-width-icon": "3rem",
   };
 
+  if (isLoading) {
+    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen">
+        <Router />
+        <Toaster />
+      </div>
+    );
+  }
+
+  return (
+    <SidebarProvider style={style as React.CSSProperties}>
+      <div className="flex h-screen w-full">
+        <AppSidebar />
+        <div className="flex flex-1 flex-col">
+          <AppHeader />
+          <main className="flex-1 overflow-auto">
+            <div className="container mx-auto p-6">
+              <Router />
+            </div>
+          </main>
+        </div>
+      </div>
+      <Toaster />
+    </SidebarProvider>
+  );
+}
+
+function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="dark">
         <UserProvider>
           <TooltipProvider>
-            <SidebarProvider style={style as React.CSSProperties}>
-              <div className="flex h-screen w-full">
-                <AppSidebar />
-                <div className="flex flex-1 flex-col">
-                  <header className="flex items-center justify-between border-b p-4">
-                    <SidebarTrigger data-testid="button-sidebar-toggle" />
-                  </header>
-                  <main className="flex-1 overflow-auto">
-                    <div className="container mx-auto p-6">
-                      <Router />
-                    </div>
-                  </main>
-                </div>
-              </div>
-            </SidebarProvider>
-            <Toaster />
+            <AppContent />
           </TooltipProvider>
         </UserProvider>
       </ThemeProvider>

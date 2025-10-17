@@ -1,30 +1,57 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { getQueryFn } from "./queryClient";
+
+interface User {
+  id: number;
+  username: string;
+  email: string;
+  xp: number;
+  level: number;
+  streak: number;
+  isAdmin: boolean;
+}
 
 interface UserContextType {
-  userId: string | null;
-  setUserId: (id: string | null) => void;
+  user: User | null;
+  isLoading: boolean;
+  refetchUser: () => Promise<void>;
+  logout: () => Promise<void>;
 }
 
 const UserContext = createContext<UserContextType>({
-  userId: null,
-  setUserId: () => {},
+  user: null,
+  isLoading: true,
+  refetchUser: async () => {},
+  logout: async () => {},
 });
 
 export function UserProvider({ children }: { children: ReactNode }) {
-  const [userId, setUserId] = useState<string | null>(() => {
-    return localStorage.getItem("lingoquest_user_id");
+  const queryClient = useQueryClient();
+  
+  const { data: user, isLoading, refetch } = useQuery<User | null>({
+    queryKey: ["/api/auth/me"],
+    queryFn: getQueryFn({ on401: "returnNull" }),
+    retry: false,
+    refetchOnWindowFocus: false,
   });
 
-  useEffect(() => {
-    if (userId) {
-      localStorage.setItem("lingoquest_user_id", userId);
-    } else {
-      localStorage.removeItem("lingoquest_user_id");
+  const refetchUser = async () => {
+    await refetch();
+  };
+
+  const logout = async () => {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+      queryClient.setQueryData(["/api/auth/me"], null);
+      await refetch();
+    } catch (error) {
+      console.error("Logout failed:", error);
     }
-  }, [userId]);
+  };
 
   return (
-    <UserContext.Provider value={{ userId, setUserId }}>
+    <UserContext.Provider value={{ user: user ?? null, isLoading, refetchUser, logout }}>
       {children}
     </UserContext.Provider>
   );

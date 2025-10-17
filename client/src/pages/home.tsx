@@ -5,37 +5,63 @@ import { StreakCounter } from "@/components/streak-counter";
 import { BadgeDisplay } from "@/components/badge-display";
 import { ArrowRight, BookOpen, Trophy, Users } from "lucide-react";
 import { Link } from "wouter";
+import { useCurrentUser } from "@/lib/user-context";
+import { useQuery } from "@tanstack/react-query";
+
+interface Badge {
+  id: number;
+  name: string;
+  description: string;
+  icon: string;
+  xpRequired: number;
+  createdAt: string;
+}
+
+interface UserBadge {
+  badgeId: number;
+  earnedAt: string;
+  badge: Badge;
+}
 
 export default function Home() {
-  const mockUser = {
-    username: "Learner",
-    xp: 350,
-    level: 4,
-    streak: 7,
-  };
+  const { user } = useCurrentUser();
 
-  const mockBadges = [
-    { name: "First Step", description: "Complete your first lesson", icon: "Star", earned: true, earnedAt: "2025-01-15" },
-    { name: "Week Warrior", description: "Maintain a 7-day streak", icon: "Flame", earned: true, earnedAt: "2025-01-20" },
-    { name: "Century Club", description: "Earn 100 XP", icon: "Trophy", earned: true, earnedAt: "2025-01-18" },
-    { name: "Contributor", description: "Submit your first lesson", icon: "Award", earned: false },
-  ];
+  const { data: userBadges = [] } = useQuery<UserBadge[]>({
+    queryKey: ["/api/badges/user", user?.id],
+    enabled: !!user,
+  });
+
+  const { data: allBadges = [] } = useQuery<Badge[]>({
+    queryKey: ["/api/badges"],
+    enabled: !!user,
+  });
+
+  if (!user) return null;
+
+  const badgesWithEarnedStatus = allBadges.map(badge => {
+    const userBadge = userBadges.find(ub => ub.badgeId === badge.id);
+    return {
+      ...badge,
+      earned: !!userBadge,
+      earnedAt: userBadge?.earnedAt,
+    };
+  });
 
   return (
     <div className="space-y-8">
       <div className="space-y-2">
-        <h1 className="text-4xl font-bold">Welcome back, {mockUser.username}!</h1>
+        <h1 className="text-4xl font-bold">Welcome back, {user.username}!</h1>
         <p className="text-lg text-muted-foreground">
           Continue your language learning journey
         </p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
-        <XPBar currentXP={mockUser.xp} level={mockUser.level} />
+        <XPBar currentXP={user.xp} level={user.level} />
         <Card className="flex items-center justify-between p-4">
           <div className="space-y-1">
             <h3 className="text-sm font-medium text-muted-foreground">Current Streak</h3>
-            <StreakCounter streak={mockUser.streak} className="border-0 bg-transparent p-0" />
+            <StreakCounter streak={user.streak} className="border-0 bg-transparent p-0" />
           </div>
         </Card>
       </div>
@@ -94,21 +120,27 @@ export default function Home() {
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-semibold">Your Achievements</h2>
           <span className="text-sm text-muted-foreground">
-            {mockBadges.filter(b => b.earned).length}/{mockBadges.length} earned
+            {badgesWithEarnedStatus.filter(b => b.earned).length}/{badgesWithEarnedStatus.length} earned
           </span>
         </div>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {mockBadges.map((badge) => (
-            <BadgeDisplay
-              key={badge.name}
-              name={badge.name}
-              description={badge.description}
-              icon={badge.icon}
-              earned={badge.earned}
-              earnedAt={badge.earnedAt}
-            />
-          ))}
-        </div>
+        {badgesWithEarnedStatus.length > 0 ? (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {badgesWithEarnedStatus.map((badge) => (
+              <BadgeDisplay
+                key={badge.id}
+                name={badge.name}
+                description={badge.description}
+                icon={badge.icon}
+                earned={badge.earned}
+                earnedAt={badge.earnedAt}
+              />
+            ))}
+          </div>
+        ) : (
+          <Card className="p-8 text-center">
+            <p className="text-muted-foreground">No badges available yet. Complete lessons to earn achievements!</p>
+          </Card>
+        )}
       </div>
     </div>
   );
