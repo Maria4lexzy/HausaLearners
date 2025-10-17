@@ -157,6 +157,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // User Progress
+  // Get user's lesson progress
+  app.get("/api/users/:userId/lessons", requireAuth, async (req, res) => {
+    try {
+      const requestingUserId = req.session.userId!;
+      const targetUserId = req.params.userId;
+
+      // Users can only view their own progress
+      if (requestingUserId !== targetUserId) {
+        return res.status(403).json({ error: "Forbidden" });
+      }
+
+      const userLessons = await storage.getUserLessons(targetUserId);
+      res.json(userLessons);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   app.post("/api/lessons/:lessonId/complete", requireAuth, async (req, res) => {
     try {
       const userId = req.session.userId!;

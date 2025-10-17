@@ -3,136 +3,137 @@ import { TrackCard } from "@/components/track-card";
 import { LessonCard } from "@/components/lesson-card";
 import { LessonPlayer } from "@/components/lesson-player";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { useCurrentUser } from "@/lib/user-context";
+import { apiRequest, queryClient } from "@/lib/queryClient";
+
+interface Track {
+  id: string;
+  name: string;
+  description: string;
+  language: string;
+  icon: string;
+  order: number;
+  isLocked: boolean;
+  unlockLevel: number;
+  createdAt: string;
+}
+
+interface Lesson {
+  id: string;
+  trackId: string;
+  title: string;
+  description: string;
+  difficulty: string;
+  xpReward: number;
+  order: number;
+  questions: any[];
+  createdAt: string;
+}
+
+interface UserLesson {
+  id: string;
+  userId: string;
+  lessonId: string;
+  completed: boolean;
+  score: number;
+  completedAt: string | null;
+}
 
 export default function Learn() {
   const [selectedTrack, setSelectedTrack] = useState<string | null>(null);
-  const [playingLesson, setPlayingLesson] = useState<any | null>(null);
+  const [playingLesson, setPlayingLesson] = useState<Lesson | null>(null);
   const { toast } = useToast();
+  const { user } = useCurrentUser();
 
-  const mockTracks = [
-    {
-      id: "1",
-      name: "Basics",
-      description: "Learn essential words and phrases",
-      isLocked: false,
-      unlockLevel: 1,
-      lessonsCompleted: 3,
-      totalLessons: 5,
-      lessons: [
-        {
-          id: "1-1",
-          title: "Greetings",
-          description: "Learn how to say hello and goodbye",
-          difficulty: "Easy" as const,
-          xpReward: 10,
-          isLocked: false,
-          isCompleted: true,
-          questions: [
-            {
-              type: "multiple_choice" as const,
-              question: "How do you say 'Hello' in Spanish?",
-              options: ["Hola", "Adiós", "Gracias", "Por favor"],
-              correctAnswer: "Hola",
-              vocabulary: [{ word: "Hola", translation: "Hello" }],
-            },
-            {
-              type: "fill_in_blank" as const,
-              question: "Complete: '_____ días' (Good day)",
-              correctAnswer: "Buenos",
-              vocabulary: [{ word: "Buenos días", translation: "Good day", examplePhrase: "Buenos días, ¿cómo estás?" }],
-            },
-          ],
-        },
-        {
-          id: "1-2",
-          title: "Numbers 1-10",
-          description: "Count from one to ten",
-          difficulty: "Easy" as const,
-          xpReward: 10,
-          isLocked: false,
-          isCompleted: true,
-          questions: [
-            {
-              type: "flashcard" as const,
-              question: "What is 'Uno' in English?",
-              correctAnswer: "One",
-              vocabulary: [{ word: "Uno", translation: "One" }],
-            },
-          ],
-        },
-        {
-          id: "1-3",
-          title: "Common Phrases",
-          description: "Essential expressions for daily use",
-          difficulty: "Easy" as const,
-          xpReward: 15,
-          isLocked: false,
-          isCompleted: true,
-          questions: [],
-        },
-        {
-          id: "1-4",
-          title: "Colors",
-          description: "Learn basic color vocabulary",
-          difficulty: "Medium" as const,
-          xpReward: 15,
-          isLocked: false,
-          isCompleted: false,
-          questions: [
-            {
-              type: "multiple_choice" as const,
-              question: "What color is 'Rojo'?",
-              options: ["Blue", "Red", "Green", "Yellow"],
-              correctAnswer: "Red",
-              vocabulary: [{ word: "Rojo", translation: "Red" }],
-            },
-          ],
-        },
-        {
-          id: "1-5",
-          title: "Days of the Week",
-          description: "Master the days of the week",
-          difficulty: "Medium" as const,
-          xpReward: 15,
-          isLocked: false,
-          isCompleted: false,
-          questions: [],
-        },
-      ],
-    },
-    {
-      id: "2",
-      name: "Travel",
-      description: "Phrases for getting around",
-      isLocked: false,
-      unlockLevel: 3,
-      lessonsCompleted: 0,
-      totalLessons: 4,
-      lessons: [],
-    },
-    {
-      id: "3",
-      name: "Food & Dining",
-      description: "Order food and discuss meals",
-      isLocked: true,
-      unlockLevel: 5,
-      lessonsCompleted: 0,
-      totalLessons: 6,
-      lessons: [],
-    },
-  ];
+  // Fetch all tracks
+  const { data: tracks = [], isLoading: tracksLoading } = useQuery<Track[]>({
+    queryKey: ["/api/tracks"],
+    enabled: !!user,
+  });
 
-  const currentTrack = mockTracks.find(t => t.id === selectedTrack);
+  // Fetch lessons for selected track
+  const { data: lessons = [], isLoading: lessonsLoading } = useQuery<Lesson[]>({
+    queryKey: ["/api/tracks", selectedTrack, "lessons"],
+    enabled: !!selectedTrack && !!user,
+  });
 
-  const handleLessonComplete = (score: number, vocabulary: any[]) => {
-    toast({
-      title: "Lesson Complete! 🎉",
-      description: `You scored ${score}/${playingLesson.questions.length}. Earned ${playingLesson.xpReward} XP!`,
-    });
-    setPlayingLesson(null);
+  // Fetch user's lesson progress
+  const { data: userLessons = [] } = useQuery<UserLesson[]>({
+    queryKey: ["/api/users", user?.id, "lessons"],
+    enabled: !!user,
+  });
+
+  // Complete lesson mutation
+  const completeLessonMutation = useMutation({
+    mutationFn: async ({ lessonId, score, vocabularyIds }: { lessonId: string; score: number; vocabularyIds: number[] }) => {
+      await apiRequest("POST", `/api/lessons/${lessonId}/complete`, { score, vocabularyIds });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/users", user?.id, "lessons"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/badges/user"] });
+    },
+  });
+
+  const currentTrack = tracks.find(t => t.id === selectedTrack);
+
+  // Calculate track progress
+  const tracksWithProgress = tracks.map(track => {
+    const trackLessons = lessons.filter(l => l.trackId === track.id);
+    const completedLessons = trackLessons.filter(l => 
+      userLessons.some(ul => ul.lessonId === l.id && ul.completed)
+    ).length;
+    
+    return {
+      ...track,
+      lessonsCompleted: completedLessons,
+      totalLessons: trackLessons.length,
+      isLocked: track.unlockLevel > (user?.level || 1),
+    };
+  });
+
+  // Add completion status to lessons
+  const lessonsWithStatus = lessons.map(lesson => {
+    const userLesson = userLessons.find(ul => ul.lessonId === lesson.id);
+    return {
+      ...lesson,
+      isCompleted: userLesson?.completed || false,
+      isLocked: false, // We can add unlock logic later
+    };
+  });
+
+  const handleLessonComplete = async (score: number, vocabulary: any[]) => {
+    if (!playingLesson) return;
+
+    try {
+      // Extract vocabulary IDs if they exist in the vocabulary items
+      const vocabularyIds = vocabulary
+        .filter(v => v.id)
+        .map(v => v.id);
+
+      await completeLessonMutation.mutateAsync({
+        lessonId: playingLesson.id,
+        score,
+        vocabularyIds,
+      });
+
+      toast({
+        title: "Lesson Complete! 🎉",
+        description: `You scored ${score}/${playingLesson.questions.length}. Earned ${playingLesson.xpReward} XP!`,
+      });
+      
+      setPlayingLesson(null);
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to complete lesson",
+        variant: "destructive",
+      });
+    }
   };
 
   if (playingLesson) {
@@ -143,6 +144,14 @@ export default function Learn() {
         onComplete={handleLessonComplete}
         onExit={() => setPlayingLesson(null)}
       />
+    );
+  }
+
+  if (tracksLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-96">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
     );
   }
 
@@ -175,30 +184,48 @@ export default function Learn() {
       </div>
 
       {!selectedTrack ? (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {mockTracks.map((track) => (
-            <TrackCard
-              key={track.id}
-              id={track.id}
-              name={track.name}
-              description={track.description}
-              isLocked={track.isLocked}
-              unlockLevel={track.unlockLevel}
-              lessonsCompleted={track.lessonsCompleted}
-              totalLessons={track.totalLessons}
-              onClick={() => !track.isLocked && setSelectedTrack(track.id)}
-            />
-          ))}
+        <>
+          {tracksWithProgress.length > 0 ? (
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {tracksWithProgress.map((track) => (
+                <TrackCard
+                  key={track.id}
+                  id={track.id}
+                  name={track.name}
+                  description={track.description}
+                  isLocked={track.isLocked}
+                  unlockLevel={track.unlockLevel}
+                  lessonsCompleted={track.lessonsCompleted}
+                  totalLessons={track.totalLessons}
+                  onClick={() => !track.isLocked && setSelectedTrack(track.id)}
+                />
+              ))}
+            </div>
+          ) : (
+            <Card>
+              <CardContent className="flex min-h-64 items-center justify-center">
+                <div className="text-center">
+                  <p className="text-lg text-muted-foreground">
+                    No tracks available yet. Check back soon!
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </>
+      ) : lessonsLoading ? (
+        <div className="flex items-center justify-center min-h-96">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
-      ) : currentTrack?.lessons && currentTrack.lessons.length > 0 ? (
+      ) : lessonsWithStatus.length > 0 ? (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {currentTrack.lessons.map((lesson) => (
+          {lessonsWithStatus.map((lesson) => (
             <LessonCard
               key={lesson.id}
               id={lesson.id}
               title={lesson.title}
               description={lesson.description}
-              difficulty={lesson.difficulty}
+              difficulty={lesson.difficulty as "Easy" | "Medium" | "Hard"}
               xpReward={lesson.xpReward}
               isLocked={lesson.isLocked}
               isCompleted={lesson.isCompleted}
