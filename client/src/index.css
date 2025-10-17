@@ -2,102 +2,117 @@
 @tailwind components;
 @tailwind utilities;
 
-/* LIGHT MODE */
+/* BOOT.DEV-INSPIRED DARK MODE (DEFAULT) */
 :root {
-  --button-outline: rgba(0,0,0, .10);
-  --badge-outline: rgba(0,0,0, .05);
+  --button-outline: rgba(255,255,255, .12);
+  --badge-outline: rgba(255,255,255, .08);
 
   /* Automatic computation of border around primary / danger buttons */
-  --opaque-button-border-intensity: -8; /* In terms of percentages */
+  --opaque-button-border-intensity: 10; /* In terms of percentages */
 
   /* Backgrounds applied on top of other backgrounds when hovered/active */
-  --elevate-1: rgba(0,0,0, .03);
-  --elevate-2: rgba(0,0,0, .08);
+  --elevate-1: rgba(255,255,255, .05);
+  --elevate-2: rgba(255,255,255, .10);
 
-  --background: 210 20% 98%;
+  /* Boot.dev dark backgrounds - deep blue-black like midnight code editor */
+  --background: 222 47% 11%;
 
-  --foreground: 220 13% 13%;
+  /* Bright text for dark mode */
+  --foreground: 210 40% 98%;
 
-  --border: 210 15% 88%;
+  /* Subtle borders */
+  --border: 215 28% 25%;
 
-  --card: 0 0% 100%;
+  /* Elevated dark panels */
+  --card: 217 33% 17%;
 
-  --card-foreground: 220 13% 13%;
+  --card-foreground: 210 40% 98%;
 
-  --card-border: 210 12% 92%;
+  --card-border: 215 28% 28%;
 
-  --sidebar: 210 18% 96%;
+  /* Darker sidebar for depth */
+  --sidebar: 222 47% 9%;
 
-  --sidebar-foreground: 220 13% 13%;
+  --sidebar-foreground: 210 40% 98%;
 
-  --sidebar-border: 210 15% 90%;
+  --sidebar-border: 215 28% 20%;
 
-  --sidebar-primary: 210 85% 45%;
+  /* Neon green for primary actions */
+  --sidebar-primary: 142 76% 60%;
 
-  --sidebar-primary-foreground: 210 20% 98%;
+  --sidebar-primary-foreground: 222 47% 11%;
 
-  --sidebar-accent: 210 15% 88%;
+  --sidebar-accent: 215 28% 22%;
 
-  --sidebar-accent-foreground: 220 13% 13%;
+  --sidebar-accent-foreground: 210 40% 98%;
 
-  --sidebar-ring: 210 85% 45%;
+  --sidebar-ring: 142 76% 60%;
 
-  --popover: 210 16% 94%;
+  --popover: 217 33% 20%;
 
-  --popover-foreground: 220 13% 13%;
+  --popover-foreground: 210 40% 98%;
 
-  --popover-border: 210 15% 86%;
+  --popover-border: 215 28% 30%;
 
-  --primary: 210 85% 45%;
+  /* Vibrant neon green for XP and success */
+  --primary: 142 76% 60%;
 
-  --primary-foreground: 210 20% 98%;
+  --primary-foreground: 222 47% 11%;
 
-  --secondary: 210 14% 90%;
+  /* Electric purple for secondary actions */
+  --secondary: 262 83% 58%;
 
-  --secondary-foreground: 220 13% 13%;
+  --secondary-foreground: 210 40% 98%;
 
-  --muted: 210 12% 92%;
+  /* Muted backgrounds */
+  --muted: 215 28% 23%;
 
-  --muted-foreground: 220 9% 46%;
+  --muted-foreground: 215 20% 65%;
 
-  --accent: 210 16% 94%;
+  /* Bright cyan accent */
+  --accent: 199 89% 48%;
 
-  --accent-foreground: 220 13% 13%;
+  --accent-foreground: 222 47% 11%;
 
-  --destructive: 0 84% 60%;
+  /* Bright red for errors */
+  --destructive: 0 91% 71%;
 
-  --destructive-foreground: 0 0% 100%;
+  --destructive-foreground: 222 47% 11%;
 
-  --input: 210 15% 82%;
-  --ring: 210 85% 45%;
-  --chart-1: 142 76% 36%;
-  --chart-2: 210 85% 45%;
-  --chart-3: 38 92% 50%;
-  --chart-4: 0 84% 60%;
-  --chart-5: 280 65% 55%;
+  --input: 215 28% 30%;
+  --ring: 142 76% 60%;
+  
+  /* Gamification chart colors - all vibrant */
+  --chart-1: 142 76% 60%; /* Neon green */
+  --chart-2: 262 83% 58%; /* Electric purple */
+  --chart-3: 199 89% 48%; /* Bright cyan */
+  --chart-4: 43 96% 56%;  /* Vibrant amber */
+  --chart-5: 0 91% 71%;   /* Bright red */
 
   --font-sans: Inter, sans-serif;
   --font-serif: Georgia, serif;
   --font-mono: JetBrains Mono, monospace;
   --radius: .5rem; /* 8px */
-  --shadow-2xs: 0px 1px 2px 0px hsl(210 15% 20% / 0.05);
-  --shadow-xs: 0px 1px 3px 0px hsl(210 15% 20% / 0.08);
-  --shadow-sm: 0px 2px 4px -1px hsl(210 15% 20% / 0.06), 0px 1px 2px -1px hsl(210 15% 20% / 0.10);
-  --shadow: 0px 4px 6px -1px hsl(210 15% 20% / 0.10), 0px 2px 4px -2px hsl(210 15% 20% / 0.10);
-  --shadow-md: 0px 6px 12px -2px hsl(210 15% 20% / 0.12), 0px 3px 7px -3px hsl(210 15% 20% / 0.10);
-  --shadow-lg: 0px 10px 20px -4px hsl(210 15% 20% / 0.15), 0px 4px 10px -4px hsl(210 15% 20% / 0.10);
-  --shadow-xl: 0px 20px 30px -6px hsl(210 15% 20% / 0.18), 0px 8px 16px -6px hsl(210 15% 20% / 0.12);
-  --shadow-2xl: 0px 25px 50px -12px hsl(210 15% 20% / 0.25);
+  
+  /* Dark mode shadows with more depth */
+  --shadow-2xs: 0px 1px 2px 0px hsl(222 47% 5% / 0.30);
+  --shadow-xs: 0px 1px 3px 0px hsl(222 47% 5% / 0.40);
+  --shadow-sm: 0px 2px 4px -1px hsl(222 47% 5% / 0.35), 0px 1px 2px -1px hsl(222 47% 5% / 0.40);
+  --shadow: 0px 4px 6px -1px hsl(222 47% 5% / 0.45), 0px 2px 4px -2px hsl(222 47% 5% / 0.40);
+  --shadow-md: 0px 6px 12px -2px hsl(222 47% 5% / 0.50), 0px 3px 7px -3px hsl(222 47% 5% / 0.45);
+  --shadow-lg: 0px 10px 20px -4px hsl(222 47% 5% / 0.55), 0px 4px 10px -4px hsl(222 47% 5% / 0.45);
+  --shadow-xl: 0px 20px 30px -6px hsl(222 47% 5% / 0.60), 0px 8px 16px -6px hsl(222 47% 5% / 0.50);
+  --shadow-2xl: 0px 25px 50px -12px hsl(222 47% 5% / 0.70);
   --tracking-normal: 0em;
   --spacing: 0.25rem;
 
-  /* Success/Progress color for gamification */
-  --success: 142 76% 36%;
-  --success-foreground: 0 0% 100%;
+  /* Neon green for XP/success/achievements */
+  --success: 142 76% 60%;
+  --success-foreground: 222 47% 11%;
 
-  /* Warning/Review color for fuzzy words */
-  --warning: 38 92% 50%;
-  --warning-foreground: 220 13% 13%;
+  /* Vibrant amber for warnings/review */
+  --warning: 43 96% 56%;
+  --warning-foreground: 222 47% 11%;
 
   /* Automatically computed borders - intensity can be controlled by the user by the --opaque-button-border-intensity setting */
 
@@ -138,94 +153,95 @@
   --warning-border: hsl(from hsl(var(--warning)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
 }
 
-.dark {
-  --button-outline: rgba(255,255,255, .10);
-  --badge-outline: rgba(255,255,255, .05);
+.light {
+  --button-outline: rgba(0,0,0, .10);
+  --badge-outline: rgba(0,0,0, .05);
 
-  --opaque-button-border-intensity: 9;  /* In terms of percentages */
+  --opaque-button-border-intensity: -8;  /* In terms of percentages */
 
   /* Backgrounds applied on top of other backgrounds when hovered/active */
-  --elevate-1: rgba(255,255,255, .04);
-  --elevate-2: rgba(255,255,255, .09);
+  --elevate-1: rgba(0,0,0, .03);
+  --elevate-2: rgba(0,0,0, .08);
 
-  --background: 220 13% 10%;
+  /* Light mode - softer colors */
+  --background: 210 20% 98%;
 
-  --foreground: 210 20% 98%;
+  --foreground: 220 13% 13%;
 
-  --border: 220 13% 20%;
+  --border: 210 15% 88%;
 
-  --card: 220 13% 15%;
+  --card: 0 0% 100%;
 
-  --card-foreground: 210 20% 98%;
+  --card-foreground: 220 13% 13%;
 
-  --card-border: 220 13% 22%;
+  --card-border: 210 12% 92%;
 
-  --sidebar: 220 13% 12%;
+  --sidebar: 210 18% 96%;
 
-  --sidebar-foreground: 210 20% 98%;
+  --sidebar-foreground: 220 13% 13%;
 
-  --sidebar-border: 220 13% 18%;
+  --sidebar-border: 210 15% 90%;
 
-  --sidebar-primary: 210 100% 65%;
+  --sidebar-primary: 142 76% 45%;
 
-  --sidebar-primary-foreground: 220 13% 10%;
+  --sidebar-primary-foreground: 210 20% 98%;
 
-  --sidebar-accent: 220 13% 18%;
+  --sidebar-accent: 210 15% 88%;
 
-  --sidebar-accent-foreground: 210 20% 98%;
+  --sidebar-accent-foreground: 220 13% 13%;
 
-  --sidebar-ring: 210 100% 65%;
+  --sidebar-ring: 142 76% 45%;
 
-  --popover: 220 13% 18%;
+  --popover: 210 16% 94%;
 
-  --popover-foreground: 210 20% 98%;
+  --popover-foreground: 220 13% 13%;
 
-  --popover-border: 220 13% 25%;
+  --popover-border: 210 15% 86%;
 
-  --primary: 210 100% 65%;
+  --primary: 142 76% 45%;
 
-  --primary-foreground: 220 13% 10%;
+  --primary-foreground: 210 20% 98%;
 
-  --secondary: 220 13% 22%;
+  --secondary: 262 83% 48%;
 
-  --secondary-foreground: 210 20% 98%;
+  --secondary-foreground: 0 0% 100%;
 
-  --muted: 220 13% 20%;
+  --muted: 210 12% 92%;
 
-  --muted-foreground: 220 15% 65%;
+  --muted-foreground: 220 9% 46%;
 
-  --accent: 220 13% 18%;
+  --accent: 199 89% 42%;
 
-  --accent-foreground: 210 20% 98%;
+  --accent-foreground: 0 0% 100%;
 
-  --destructive: 0 80% 65%;
+  --destructive: 0 84% 60%;
 
   --destructive-foreground: 0 0% 100%;
 
-  --input: 220 13% 28%;
-  --ring: 210 100% 65%;
-  --chart-1: 142 70% 45%;
-  --chart-2: 210 100% 65%;
-  --chart-3: 38 90% 55%;
-  --chart-4: 0 80% 65%;
-  --chart-5: 280 65% 65%;
+  --input: 210 15% 82%;
+  --ring: 142 76% 45%;
+  --chart-1: 142 76% 45%;
+  --chart-2: 262 83% 48%;
+  --chart-3: 199 89% 42%;
+  --chart-4: 43 96% 50%;
+  --chart-5: 0 84% 60%;
 
-  --shadow-2xs: 0px 1px 2px 0px hsl(220 13% 5% / 0.20);
-  --shadow-xs: 0px 1px 3px 0px hsl(220 13% 5% / 0.30);
-  --shadow-sm: 0px 2px 4px -1px hsl(220 13% 5% / 0.25), 0px 1px 2px -1px hsl(220 13% 5% / 0.35);
-  --shadow: 0px 4px 6px -1px hsl(220 13% 5% / 0.35), 0px 2px 4px -2px hsl(220 13% 5% / 0.35);
-  --shadow-md: 0px 6px 12px -2px hsl(220 13% 5% / 0.40), 0px 3px 7px -3px hsl(220 13% 5% / 0.35);
-  --shadow-lg: 0px 10px 20px -4px hsl(220 13% 5% / 0.45), 0px 4px 10px -4px hsl(220 13% 5% / 0.35);
-  --shadow-xl: 0px 20px 30px -6px hsl(220 13% 5% / 0.50), 0px 8px 16px -6px hsl(220 13% 5% / 0.40);
-  --shadow-2xl: 0px 25px 50px -12px hsl(220 13% 5% / 0.60);
+  --shadow-2xs: 0px 1px 2px 0px hsl(210 15% 20% / 0.05);
+  --shadow-xs: 0px 1px 3px 0px hsl(210 15% 20% / 0.08);
+  --shadow-sm: 0px 2px 4px -1px hsl(210 15% 20% / 0.06), 0px 1px 2px -1px hsl(210 15% 20% / 0.10);
+  --shadow: 0px 4px 6px -1px hsl(210 15% 20% / 0.10), 0px 2px 4px -2px hsl(210 15% 20% / 0.10);
+  --shadow-md: 0px 6px 12px -2px hsl(210 15% 20% / 0.12), 0px 3px 7px -3px hsl(210 15% 20% / 0.10);
+  --shadow-lg: 0px 10px 20px -4px hsl(210 15% 20% / 0.15), 0px 4px 10px -4px hsl(210 15% 20% / 0.10);
+  --shadow-xl: 0px 20px 30px -6px hsl(210 15% 20% / 0.18), 0px 8px 16px -6px hsl(210 15% 20% / 0.12);
+  --shadow-2xl: 0px 25px 50px -12px hsl(210 15% 20% / 0.25);
 
   /* Success/Progress color for gamification */
-  --success: 142 70% 45%;
+  --success: 142 76% 45%;
   --success-foreground: 0 0% 100%;
 
   /* Warning/Review color for fuzzy words */
-  --warning: 38 90% 55%;
-  --warning-foreground: 220 13% 10%;
+  --warning: 43 96% 50%;
+  --warning-foreground: 220 13% 13%;
 
   /* Automatically computed borders - intensity can be controlled by the user by the --opaque-button-border-intensity setting */
   --sidebar-primary-border: hsl(from hsl(var(--sidebar-primary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);

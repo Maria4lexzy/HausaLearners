@@ -2,46 +2,50 @@
 
 ## Design Approach
 
-**Reference-Based Approach** drawing from industry leaders in gamification and educational technology:
-- **Duolingo**: Playful gamification, progress visualization, approachable learning UI
-- **Boot.dev**: Developer-focused XP systems, skill tree patterns, achievement displays
-- **Linear**: Clean typography, modern interface patterns, subtle interactions
-- **Notion**: Intuitive content creation and contribution workflows
+**Boot.dev-Inspired Dark Mode Aesthetics** with gamified learning elements:
+- **Boot.dev**: Developer-focused dark UI, vibrant neon accents, XP systems, skill trees, retro gaming vibes
+- **Terminal/Code Aesthetic**: Monospace accents, command-line inspired elements, tech-focused design
+- **Duolingo Gamification**: Progress visualization, streak tracking, achievement unlocks
+- **Notion Workflows**: Intuitive content creation and contribution systems
 
 **Core Design Principles:**
-- **Playful yet Professional**: Balance fun gamification with serious learning outcomes
-- **Progress Transparency**: Always show user advancement clearly and immediately
-- **Cognitive Load Management**: Keep lessons focused, UI distractions minimal during learning
-- **Community Trust**: Make contributions feel valuable and moderated content trustworthy
+- **Dark Mode First**: Deep backgrounds with vibrant neon accents (greens, purples, blues)
+- **Gamification Front & Center**: XP bars, badges, and streaks as primary UI elements
+- **Retro Gaming Vibes**: Pixel-perfect icons, achievement unlocks, level-up celebrations
+- **Progress Obsession**: Every action shows immediate XP gain and advancement
+- **Developer-Friendly**: Clean code-like interfaces, keyboard shortcuts, power user features
 
 ---
 
-## Color Palette
+## Color Palette - Boot.dev Dark Mode
 
-**Light Mode:**
-- Primary Brand: 210 85% 45% (vibrant blue - trust, learning)
-- Success/Progress: 142 76% 36% (green - achievement, correct answers)
-- Warning/Review: 38 92% 50% (amber - needs practice, fuzzy words)
-- Error/Forgotten: 0 84% 60% (red - incorrect, forgotten words)
-- Background: 210 20% 98% (soft blue-tinted white)
-- Surface: 0 0% 100% (pure white cards)
-- Text Primary: 220 13% 13% (deep charcoal)
-- Text Secondary: 220 9% 46% (medium gray)
+**Primary Dark Mode (Default):**
+- Background: 222 47% 11% (deep dark blue-black, like midnight code editor)
+- Surface/Card: 217 33% 17% (slightly elevated dark blue panels)
+- Border: 215 28% 25% (subtle blue-gray borders)
 
-**Dark Mode:**
-- Primary Brand: 210 100% 65% (lighter blue for contrast)
-- Success/Progress: 142 70% 45% (lighter green)
-- Warning/Review: 38 90% 55% (lighter amber)
-- Error/Forgotten: 0 80% 65% (lighter red)
-- Background: 220 13% 10% (deep blue-black)
-- Surface: 220 13% 15% (elevated dark cards)
-- Text Primary: 210 20% 98% (near white)
-- Text Secondary: 220 15% 65% (light gray)
+**Neon Accent Colors (High Vibrance):**
+- Primary Brand: 142 76% 60% (vibrant neon green - XP, success, achievements)
+- Secondary: 262 83% 58% (electric purple - badges, special features)
+- Accent: 199 89% 48% (bright cyan - interactive elements, links)
+- Warning: 43 96% 56% (vibrant amber - review needed, fuzzy words)
+- Destructive: 0 91% 71% (bright red - errors, forgotten words)
 
-**Memory Strength Color System (Vocabulary Book):**
-- Known: Use Success green with 20% opacity backgrounds
-- Fuzzy: Use Warning amber with 20% opacity backgrounds  
-- Forgotten: Use Error red with 20% opacity backgrounds
+**Text Hierarchy:**
+- Text Primary: 210 40% 98% (bright near-white)
+- Text Secondary: 215 20% 65% (muted blue-gray)
+- Text Tertiary: 215 16% 47% (dimmer gray for metadata)
+
+**XP & Gamification Colors:**
+- XP Green: 142 76% 60% (neon green for XP gains)
+- Level Gold: 48 96% 53% (golden for level-ups and rank #1)
+- Streak Fire: 14 91% 60% (orange-red for streak flames)
+- Badge Purple: 262 83% 58% (electric purple for achievements)
+
+**Memory Strength System:**
+- Known: 142 76% 60% (neon green border + 142 76% 60% / 0.15 background)
+- Fuzzy: 43 96% 56% (vibrant amber border + 43 96% 56% / 0.15 background)
+- Forgotten: 0 91% 71% (bright red border + 0 91% 71% / 0.15 background)
 
 ---
 

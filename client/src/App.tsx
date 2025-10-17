@@ -37,7 +37,7 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider defaultTheme="light">
+      <ThemeProvider defaultTheme="dark">
         <UserProvider>
           <TooltipProvider>
             <SidebarProvider style={style as React.CSSProperties}>
