@@ -4,3 +4,39 @@ dist
 server/public
 vite.config.ts.*
 *.tar.gz
+
+node_modules/
+dist/
+
+# Compiled Java class files
+*.class
+
+# JetBrains IDE
+.idea/
+
+# intellij
+*.iml
+
+# Large media files
+*.mp4
+*.tiff
+*.avi
+*.flv
+*.mov
+*.wmv
+
+# env
+.env.development.local
+.env.production
+.env.production.local
+.env.example
+.env.example
+
+# rollup analysis
+bundle-analysis.html
+
+# Build
+build/
+
+# yarn
+yarn.lock

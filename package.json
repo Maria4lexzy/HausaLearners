@@ -104,5 +104,17 @@
   },
   "optionalDependencies": {
     "bufferutil": "^4.0.8"
-  }
+  },
+  "description": "",
+  "main": "postcss.config.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Maria4lexzy/HausaLearners.git"
+  },
+  "keywords": [],
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/Maria4lexzy/HausaLearners/issues"
+  },
+  "homepage": "https://github.com/Maria4lexzy/HausaLearners#readme"
 }
