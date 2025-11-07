@@ -30,7 +30,7 @@ dist/
 .env.production
 .env.production.local
 .env.example
-.env.example
+.env
 
 # rollup analysis
 bundle-analysis.html
