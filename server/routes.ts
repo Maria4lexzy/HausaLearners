@@ -11,6 +11,16 @@ import { setupAuth, isAuthenticated } from "./replitAuth";
 export async function registerRoutes(app: Express): Promise<Server> {
   // Setup Replit Auth (OAuth with Google, GitHub, Apple, X, email/password)
   await setupAuth(app);
+
+  // Normalize session: Set req.session.userId for OAuth users
+  // This ensures both OAuth and password auth work with existing middleware
+  app.use((req: any, res, next) => {
+    if (req.user && req.user.claims && req.user.claims.sub && !req.session.userId) {
+      req.session.userId = req.user.claims.sub;
+    }
+    next();
+  });
+
   // Database seeding endpoint
   app.post("/api/seed", async (_req, res) => {
     try {

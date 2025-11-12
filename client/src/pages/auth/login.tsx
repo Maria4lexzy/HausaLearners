@@ -10,7 +10,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { useToast } from "@/hooks/use-toast";
 import { useCurrentUser } from "@/lib/user-context";
 import { apiRequest } from "@/lib/queryClient";
-import { Loader2, LogIn } from "lucide-react";
+import { Loader2, LogIn, Sparkles } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
 
 const loginSchema = z.object({
   username: z.string().min(1, "Username is required"),
@@ -67,9 +68,38 @@ export default function Login() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <FormField
+          <div className="space-y-6">
+            {/* Replit Auth - OAuth login with Google, GitHub, Apple, X */}
+            <div className="space-y-3">
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => window.location.href = "/api/login"}
+                data-testid="button-replit-login"
+              >
+                <Sparkles className="mr-2 h-4 w-4" />
+                Continue with Replit
+              </Button>
+              <p className="text-xs text-center text-muted-foreground">
+                Sign in with Google, GitHub, Apple, X, or email
+              </p>
+            </div>
+
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <Separator className="w-full" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-card px-2 text-muted-foreground">
+                  Or continue with password
+                </span>
+              </div>
+            </div>
+
+            {/* Traditional password login */}
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <FormField
                 control={form.control}
                 name="username"
                 render={({ field }) => (
@@ -136,8 +166,9 @@ export default function Login() {
                   Create one
                 </button>
               </div>
-            </form>
-          </Form>
+              </form>
+            </Form>
+          </div>
         </CardContent>
       </Card>
     </div>
