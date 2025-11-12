@@ -12,11 +12,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Setup Replit Auth (OAuth with Google, GitHub, Apple, X, email/password)
   await setupAuth(app);
 
-  // Normalize session: Set req.session.userId for OAuth users
+  // Normalize session: Set req.session.userId for OAuth users (Replit Auth & Facebook)
   // This ensures both OAuth and password auth work with existing middleware
   app.use((req: any, res, next) => {
-    if (req.user && req.user.claims && req.user.claims.sub && !req.session.userId) {
-      req.session.userId = req.user.claims.sub;
+    if (!req.session.userId && req.user) {
+      // Handle Replit Auth users
+      if (req.user.claims && req.user.claims.sub) {
+        req.session.userId = req.user.claims.sub;
+      }
+      // Handle Facebook OAuth users
+      else if (req.user.facebookId) {
+        req.session.userId = req.user.facebookId;
+      }
     }
     next();
   });

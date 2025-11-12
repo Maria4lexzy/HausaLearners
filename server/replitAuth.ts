@@ -1,8 +1,10 @@
 // Replit Auth integration - supports Google, GitHub, Apple, X, and email/password
+// Facebook OAuth integration - supports Facebook login
 // Based on Replit Auth blueprint: blueprint:javascript_log_in_with_replit
 
 import * as client from "openid-client";
 import { Strategy, type VerifyFunction } from "openid-client/passport";
+import { Strategy as FacebookStrategy } from "passport-facebook";
 import passport from "passport";
 import session from "express-session";
 import type { Express, RequestHandler } from "express";
@@ -65,6 +67,19 @@ async function upsertUser(claims: any) {
   });
 }
 
+async function upsertFacebookUser(profile: any) {
+  // Map Facebook user to our internal user system
+  const [firstName, ...lastNameParts] = (profile.displayName || "").split(" ");
+  await storage.upsertUser({
+    id: profile.id, // Use Facebook user ID as primary ID
+    facebookId: profile.id,
+    email: profile.emails?.[0]?.value,
+    firstName: firstName,
+    lastName: lastNameParts.join(" "),
+    profileImageUrl: profile.photos?.[0]?.value,
+  });
+}
+
 export async function setupAuth(app: Express) {
   app.set("trust proxy", 1);
   app.use(getSession());
@@ -104,6 +119,25 @@ export async function setupAuth(app: Express) {
     }
   };
 
+  // Facebook OAuth Strategy
+  if (process.env.FACEBOOK_APP_ID && process.env.FACEBOOK_APP_SECRET) {
+    passport.use(new FacebookStrategy({
+      clientID: process.env.FACEBOOK_APP_ID,
+      clientSecret: process.env.FACEBOOK_APP_SECRET,
+      callbackURL: `/api/auth/facebook/callback`,
+      profileFields: ['id', 'displayName', 'emails', 'photos'],
+      enableProof: true,
+    }, async (accessToken, refreshToken, profile, done) => {
+      try {
+        await upsertFacebookUser(profile);
+        // Create a simple user object for session
+        done(null, { facebookId: profile.id, provider: 'facebook' });
+      } catch (error) {
+        done(error);
+      }
+    }));
+  }
+
   passport.serializeUser((user: Express.User, cb) => cb(null, user));
   passport.deserializeUser((user: Express.User, cb) => cb(null, user));
 
@@ -133,6 +167,22 @@ export async function setupAuth(app: Express) {
       );
     });
   });
+
+  // Facebook OAuth Routes
+  app.get("/api/auth/facebook",
+    passport.authenticate("facebook", { scope: ["email"] })
+  );
+
+  app.get("/api/auth/facebook/callback",
+    passport.authenticate("facebook", { 
+      failureRedirect: "/auth/login",
+      failureMessage: true 
+    }),
+    (req, res) => {
+      // Successful authentication, redirect to home
+      res.redirect("/");
+    }
+  );
 }
 
 export const isAuthenticated: RequestHandler = async (req, res, next) => {
