@@ -14,12 +14,13 @@ export const sessions = pgTable(
   (table) => [index("IDX_session_expire").on(table.expire)],
 );
 
-// Users table - supports both OAuth (Replit Auth) and password authentication
+// Users table - supports both OAuth (Replit Auth, Facebook) and password authentication
 export const users = pgTable("users", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   
-  // OAuth fields (from Replit Auth) - replitId is the stable Replit user ID
-  replitId: varchar("replit_id").unique(), // Maps to sub claim from OAuth
+  // OAuth fields - replitId is the stable Replit user ID, facebookId is the Facebook user ID
+  replitId: varchar("replit_id").unique(), // Maps to sub claim from Replit OAuth
+  facebookId: varchar("facebook_id").unique(), // Facebook OAuth user ID
   firstName: varchar("first_name"),
   lastName: varchar("last_name"),
   profileImageUrl: varchar("profile_image_url"),
@@ -164,14 +165,15 @@ export const insertUserSchema = createInsertSchema(users).omit({
   updatedAt: true,
 });
 
-// Upsert schema for OAuth users (Replit Auth)
+// Upsert schema for OAuth users (Replit Auth, Facebook)
 export const upsertUserSchema = createInsertSchema(users).pick({
-  id: true, // Required for upsert (replitId mapped to id)
+  id: true, // Required for upsert
   email: true,
   firstName: true,
   lastName: true,
   profileImageUrl: true,
-  replitId: true,
+  replitId: true, // For Replit Auth
+  facebookId: true, // For Facebook OAuth
 });
 
 export const insertTrackSchema = createInsertSchema(tracks).omit({
