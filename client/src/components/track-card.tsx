@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Book, Lock, CheckCircle2 } from "lucide-react";
+import { Book, Lock, CheckCircle2, Map, Trophy } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface TrackCardProps {
@@ -30,46 +30,60 @@ export function TrackCard({
   return (
     <Card
       className={cn(
-        "cursor-pointer transition-all hover-elevate active-elevate-2",
-        isLocked && "opacity-60"
+        "group cursor-pointer transition-all hover-elevate active-elevate-2 border-2",
+        isComplete && "border-success/30 bg-gradient-to-br from-success/5 to-background",
+        isLocked && "opacity-60 grayscale border-muted",
+        !isComplete && !isLocked && "hover:border-primary/30"
       )}
       onClick={onClick}
       data-testid={`track-card-${id}`}
     >
-      <CardHeader className="gap-2">
-        <div className="flex items-start justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-              <Book className="h-5 w-5" />
+      <CardHeader className="gap-3 pb-3">
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex items-center gap-3 flex-1 min-w-0">
+            <div className={cn(
+              "flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border-2 transition-all",
+              isComplete && "bg-success/20 border-success/40 text-success",
+              isLocked && "bg-muted border-muted-foreground/20 text-muted-foreground",
+              !isComplete && !isLocked && "bg-primary/20 border-primary/40 text-primary group-hover:scale-110"
+            )}>
+              {isComplete ? <Trophy className="h-6 w-6" /> : <Map className="h-6 w-6" />}
             </div>
-            <CardTitle className="text-xl">{name}</CardTitle>
+            <div className="flex-1 min-w-0">
+              <CardTitle className="text-lg group-hover:text-primary transition-colors truncate">{name}</CardTitle>
+              <CardDescription className="text-sm line-clamp-1">{description}</CardDescription>
+            </div>
           </div>
-          {isComplete && (
-            <CheckCircle2 className="h-5 w-5 shrink-0 text-success" data-testid="icon-track-completed" />
-          )}
           {isLocked && (
-            <Lock className="h-5 w-5 shrink-0 text-muted-foreground" data-testid="icon-track-locked" />
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted border-2">
+              <Lock className="h-4 w-4 text-muted-foreground" data-testid="icon-track-locked" />
+            </div>
           )}
         </div>
-        <CardDescription>{description}</CardDescription>
       </CardHeader>
-      <CardContent className="space-y-3">
+      <CardContent className="space-y-3 pt-0">
         {isLocked ? (
-          <Badge variant="outline" data-testid="badge-unlock-level">
-            Unlocks at Level {unlockLevel}
+          <Badge variant="outline" className="bg-muted text-muted-foreground border-muted-foreground/20" data-testid="badge-unlock-level">
+            <Lock className="h-3 w-3 mr-1" />
+            Level {unlockLevel} Required
           </Badge>
         ) : (
           <>
-            <div className="space-y-1">
+            <div className="space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Progress</span>
+                <span className="text-muted-foreground">Quest Progress</span>
                 <span className="font-medium" data-testid="text-progress">
-                  {lessonsCompleted}/{totalLessons} lessons
+                  {lessonsCompleted}/{totalLessons} completed
                 </span>
               </div>
-              <div className="h-2 overflow-hidden rounded-full bg-muted">
+              <div className="h-3 overflow-hidden rounded-full bg-secondary border border-primary/20">
                 <div
-                  className="h-full bg-gradient-to-r from-primary to-success transition-all"
+                  className={cn(
+                    "h-full transition-all duration-500",
+                    isComplete 
+                      ? "bg-gradient-to-r from-success to-success/80" 
+                      : "bg-gradient-to-r from-primary via-primary/80 to-success"
+                  )}
                   style={{ width: `${completionPercentage}%` }}
                   data-testid="progress-track"
                 />
