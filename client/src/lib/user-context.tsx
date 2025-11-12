@@ -4,7 +4,13 @@ import { getQueryFn } from "./queryClient";
 
 interface User {
   id: number;
-  username: string;
+  // OAuth fields (from Replit Auth)
+  replitId?: string;
+  firstName?: string;
+  lastName?: string;
+  profileImageUrl?: string;
+  // Traditional auth fields (username nullable for OAuth users)
+  username?: string;
   email: string;
   xp: number;
   level: number;

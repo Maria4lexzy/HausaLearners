@@ -14,7 +14,7 @@ import { Loader2, LogIn, Sparkles } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 
 const loginSchema = z.object({
-  username: z.string().min(1, "Username is required"),
+  email: z.string().email("Please enter a valid email"),
   password: z.string().min(1, "Password is required"),
 });
 
@@ -29,7 +29,7 @@ export default function Login() {
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      username: "",
+      email: "",
       password: "",
     },
   });
@@ -50,7 +50,7 @@ export default function Login() {
     } catch (error: any) {
       toast({
         title: "Login failed",
-        description: error.message || "Invalid username or password",
+        description: error.message || "Invalid email or password",
         variant: "destructive",
       });
     } finally {
@@ -101,15 +101,16 @@ export default function Login() {
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 <FormField
                 control={form.control}
-                name="username"
+                name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Username</FormLabel>
+                    <FormLabel>Email</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
-                        placeholder="Enter your username"
-                        data-testid="input-username"
+                        type="email"
+                        placeholder="Enter your email"
+                        data-testid="input-email"
                       />
                     </FormControl>
                     <FormMessage />

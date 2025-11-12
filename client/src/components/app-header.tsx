@@ -17,7 +17,13 @@ export function AppHeader() {
 
   if (!user) return null;
 
-  const initials = user.username
+  // Display name: prioritize firstName+lastName (OAuth) > username > email
+  const displayName = user.firstName && user.lastName
+    ? `${user.firstName} ${user.lastName}`
+    : user.username || user.email || "User";
+
+  // Generate initials from display name
+  const initials = displayName
     .split(" ")
     .map(n => n[0])
     .join("")
@@ -30,7 +36,7 @@ export function AppHeader() {
       
       <div className="flex items-center gap-4">
         <div className="hidden sm:flex flex-col items-end">
-          <p className="text-sm font-medium" data-testid="text-username">{user.username}</p>
+          <p className="text-sm font-medium" data-testid="text-username">{displayName}</p>
           <p className="text-xs text-muted-foreground">
             Level {user.level} • {user.xp} XP
           </p>
@@ -49,7 +55,7 @@ export function AppHeader() {
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>
               <div className="flex flex-col space-y-1">
-                <p className="text-sm font-medium">{user.username}</p>
+                <p className="text-sm font-medium">{displayName}</p>
                 <p className="text-xs text-muted-foreground">{user.email}</p>
               </div>
             </DropdownMenuLabel>
