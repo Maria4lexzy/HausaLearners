@@ -1,6 +1,5 @@
 import "dotenv/config";
 import express, { type Request, Response, NextFunction } from "express";
-import session from "express-session";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
@@ -8,23 +7,8 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-if (!process.env.SESSION_SECRET) {
-  console.warn("WARNING: SESSION_SECRET not set. Using insecure default for development only.");
-}
-
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET || "lingoquest-dev-secret-change-in-prod",
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      secure: process.env.NODE_ENV === "production",
-      httpOnly: true,
-      sameSite: "lax",
-      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
-    },
-  })
-);
+// Session setup is handled by replitAuth.ts (PostgreSQL-backed sessions)
+// This provides production-ready session persistence
 
 app.use((req, res, next) => {
   const start = Date.now();

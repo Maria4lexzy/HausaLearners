@@ -6,8 +6,11 @@ import { seedDatabase } from "./seed-endpoint";
 import { requireAuth, requireAdmin, requireSelfOrAdmin } from "./middleware";
 import { insertLessonSchema, insertTrackSchema, insertContributionSchema } from "@shared/schema";
 import type { Question } from "@shared/schema";
+import { setupAuth, isAuthenticated } from "./replitAuth";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Setup Replit Auth (OAuth with Google, GitHub, Apple, X, email/password)
+  await setupAuth(app);
   // Database seeding endpoint
   app.post("/api/seed", async (_req, res) => {
     try {
@@ -18,7 +21,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Auth routes
+  // Replit Auth user endpoint (for OAuth users)
+  app.get("/api/auth/user", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      res.json({
+        id: user.id,
+        username: user.username || user.firstName || user.email?.split('@')[0],
+        email: user.email,
+        xp: user.xp,
+        level: user.level,
+        streak: user.streak,
+        isAdmin: user.isAdmin,
+        profileImageUrl: user.profileImageUrl,
+      });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Traditional auth routes (password-based login)
   app.post("/api/auth/register", async (req, res) => {
     try {
       const { username, email, password } = req.body;

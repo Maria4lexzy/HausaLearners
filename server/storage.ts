@@ -3,6 +3,7 @@ import { eq, desc, sql, and } from "drizzle-orm";
 import {
   type User,
   type InsertUser,
+  type UpsertUser,
   type Track,
   type InsertTrack,
   type Lesson,
@@ -33,6 +34,7 @@ export interface IStorage {
   getUserByUsername(username: string): Promise<User | undefined>;
   getUserByEmail(email: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  upsertUser(user: UpsertUser): Promise<User>; // For OAuth users (Replit Auth)
   updateUserXP(userId: string, xpGained: number): Promise<User>;
   updateUserStreak(userId: string, streak: number, lastActiveDate: string): Promise<User>;
 
@@ -97,6 +99,25 @@ export class DatabaseStorage implements IStorage {
 
   async createUser(insertUser: InsertUser): Promise<User> {
     const [user] = await db.insert(users).values(insertUser).returning();
+    return user;
+  }
+
+  async upsertUser(userData: UpsertUser): Promise<User> {
+    // For OAuth users - creates or updates user from Replit Auth
+    const [user] = await db
+      .insert(users)
+      .values(userData)
+      .onConflictDoUpdate({
+        target: users.id,
+        set: {
+          email: userData.email,
+          firstName: userData.firstName,
+          lastName: userData.lastName,
+          profileImageUrl: userData.profileImageUrl,
+          updatedAt: new Date(),
+        },
+      })
+      .returning();
     return user;
   }
 

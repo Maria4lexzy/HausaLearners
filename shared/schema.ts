@@ -1,20 +1,43 @@
 import { sql } from "drizzle-orm";
-import { pgTable, text, varchar, integer, timestamp, boolean, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, text, varchar, integer, timestamp, boolean, jsonb, index } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-// Users table - core user data and gamification
+// Session storage table (required for Replit Auth and production session persistence)
+export const sessions = pgTable(
+  "sessions",
+  {
+    sid: varchar("sid").primaryKey(),
+    sess: jsonb("sess").notNull(),
+    expire: timestamp("expire").notNull(),
+  },
+  (table) => [index("IDX_session_expire").on(table.expire)],
+);
+
+// Users table - supports both OAuth (Replit Auth) and password authentication
 export const users = pgTable("users", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  username: text("username").notNull().unique(),
-  email: text("email").notNull().unique(),
-  password: text("password").notNull(),
+  
+  // OAuth fields (from Replit Auth) - replitId is the stable Replit user ID
+  replitId: varchar("replit_id").unique(), // Maps to sub claim from OAuth
+  firstName: varchar("first_name"),
+  lastName: varchar("last_name"),
+  profileImageUrl: varchar("profile_image_url"),
+  
+  // Traditional auth fields (nullable for OAuth users)
+  username: text("username").unique(),
+  email: text("email").unique(),
+  password: text("password"), // Nullable for OAuth users
+  
+  // Gamification fields
   xp: integer("xp").notNull().default(0),
   level: integer("level").notNull().default(1),
   streak: integer("streak").notNull().default(0),
   lastActiveDate: text("last_active_date"),
   isAdmin: boolean("is_admin").notNull().default(false),
+  
   createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
 // Lesson tracks (e.g., "Travel", "Shopping", "Family")
@@ -138,6 +161,17 @@ export const insertUserSchema = createInsertSchema(users).omit({
   lastActiveDate: true,
   isAdmin: true,
   createdAt: true,
+  updatedAt: true,
+});
+
+// Upsert schema for OAuth users (Replit Auth)
+export const upsertUserSchema = createInsertSchema(users).pick({
+  id: true, // Required for upsert (replitId mapped to id)
+  email: true,
+  firstName: true,
+  lastName: true,
+  profileImageUrl: true,
+  replitId: true,
 });
 
 export const insertTrackSchema = createInsertSchema(tracks).omit({
@@ -181,6 +215,7 @@ export const insertContributionSchema = createInsertSchema(contributions).omit({
 
 // Type exports
 export type InsertUser = z.infer<typeof insertUserSchema>;
+export type UpsertUser = z.infer<typeof upsertUserSchema>;
 export type User = typeof users.$inferSelect;
 
 export type InsertTrack = z.infer<typeof insertTrackSchema>;
