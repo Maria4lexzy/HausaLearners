@@ -10,7 +10,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { useToast } from "@/hooks/use-toast";
 import { useCurrentUser } from "@/lib/user-context";
 import { apiRequest } from "@/lib/queryClient";
-import { Loader2, LogIn, Sparkles } from "lucide-react";
+import { Loader2, LogIn } from "lucide-react";
+import { FaGoogle, FaFacebook } from "react-icons/fa";
 import { Separator } from "@/components/ui/separator";
 
 const loginSchema = z.object({
@@ -69,20 +70,26 @@ export default function Login() {
         </CardHeader>
         <CardContent>
           <div className="space-y-6">
-            {/* Replit Auth - OAuth login with Google, GitHub, Apple, X */}
+            {/* OAuth Login Options */}
             <div className="space-y-3">
               <Button
                 variant="outline"
                 className="w-full"
-                onClick={() => window.location.href = "/api/login"}
-                data-testid="button-replit-login"
+                onClick={() => window.location.href = "/api/auth/google"}
+                data-testid="button-google-login"
               >
-                <Sparkles className="mr-2 h-4 w-4" />
-                Continue with Replit
+                <FaGoogle className="mr-2 h-4 w-4" />
+                Sign in with Google
               </Button>
-              <p className="text-xs text-center text-muted-foreground">
-                Sign in with Google, GitHub, Apple, X, or email
-              </p>
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => window.location.href = "/api/auth/facebook"}
+                data-testid="button-facebook-login"
+              >
+                <FaFacebook className="mr-2 h-4 w-4" />
+                Sign in with Facebook
+              </Button>
             </div>
 
             <div className="relative">

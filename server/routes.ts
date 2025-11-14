@@ -6,24 +6,17 @@ import { seedDatabase } from "./seed-endpoint";
 import { requireAuth, requireAdmin, requireSelfOrAdmin } from "./middleware";
 import { insertLessonSchema, insertTrackSchema, insertContributionSchema } from "@shared/schema";
 import type { Question } from "@shared/schema";
-import { setupAuth, isAuthenticated } from "./replitAuth";
+import { setupAuth } from "./replitAuth";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Setup Replit Auth (OAuth with Google, GitHub, Apple, X, email/password)
+  // Setup OAuth (Google & Facebook)
   await setupAuth(app);
 
-  // Normalize session: Set req.session.userId for OAuth users (Replit Auth & Facebook)
+  // Normalize session: Set req.session.userId for OAuth users (Google & Facebook)
   // This ensures both OAuth and password auth work with existing middleware
   app.use((req: any, res, next) => {
-    if (!req.session.userId && req.user) {
-      // Handle Replit Auth users
-      if (req.user.claims && req.user.claims.sub) {
-        req.session.userId = req.user.claims.sub;
-      }
-      // Handle Facebook OAuth users
-      else if (req.user.facebookId) {
-        req.session.userId = req.user.facebookId;
-      }
+    if (!req.session.userId && req.user && req.user.userId) {
+      req.session.userId = req.user.userId;
     }
     next();
   });
@@ -33,29 +26,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const result = await seedDatabase();
       res.json(result);
-    } catch (error: any) {
-      res.status(500).json({ error: error.message });
-    }
-  });
-
-  // Replit Auth user endpoint (for OAuth users)
-  app.get("/api/auth/user", isAuthenticated, async (req: any, res) => {
-    try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      if (!user) {
-        return res.status(404).json({ error: "User not found" });
-      }
-      res.json({
-        id: user.id,
-        username: user.username || user.firstName || user.email?.split('@')[0],
-        email: user.email,
-        xp: user.xp,
-        level: user.level,
-        streak: user.streak,
-        isAdmin: user.isAdmin,
-        profileImageUrl: user.profileImageUrl,
-      });
     } catch (error: any) {
       res.status(500).json({ error: error.message });
     }
@@ -123,8 +93,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       res.json({
         id: user.id,
-        username: user.username,
+        username: user.username || user.firstName || user.email?.split('@')[0],
         email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        profileImageUrl: user.profileImageUrl,
         xp: user.xp,
         level: user.level,
         streak: user.streak,

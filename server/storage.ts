@@ -103,9 +103,27 @@ export class DatabaseStorage implements IStorage {
   }
 
   async upsertUser(userData: UpsertUser): Promise<User> {
-    // For OAuth users - creates or updates user from Replit Auth
-    // First try to find existing user by email
-    const existingUser = await this.getUserByEmail(userData.email);
+    // For OAuth users - creates or updates user from Google/Facebook
+    // Priority order: googleId -> facebookId -> email
+    let existingUser: User | undefined;
+    
+    // Check by OAuth provider ID first
+    if (userData.googleId) {
+      const [user] = await db.select().from(users).where(eq(users.googleId, userData.googleId));
+      existingUser = user;
+    } else if (userData.facebookId) {
+      const [user] = await db.select().from(users).where(eq(users.facebookId, userData.facebookId));
+      existingUser = user;
+    } else if (userData.replitId) {
+      // Legacy Replit Auth lookup for migration
+      const [user] = await db.select().from(users).where(eq(users.replitId, userData.replitId));
+      existingUser = user;
+    }
+    
+    // Fall back to email lookup for migration/linking
+    if (!existingUser && userData.email) {
+      existingUser = await this.getUserByEmail(userData.email);
+    }
     
     if (existingUser) {
       // Update existing user with OAuth info (only if provided)
@@ -113,6 +131,8 @@ export class DatabaseStorage implements IStorage {
         updatedAt: new Date(),
       };
       
+      if (userData.googleId) updateData.googleId = userData.googleId;
+      if (userData.facebookId) updateData.facebookId = userData.facebookId;
       if (userData.replitId) updateData.replitId = userData.replitId;
       if (userData.firstName) updateData.firstName = userData.firstName;
       if (userData.lastName) updateData.lastName = userData.lastName;
