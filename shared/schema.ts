@@ -18,9 +18,10 @@ export const sessions = pgTable(
 export const users = pgTable("users", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   
-  // OAuth fields - replitId is the stable Replit user ID, facebookId is the Facebook user ID
-  replitId: varchar("replit_id").unique(), // Maps to sub claim from Replit OAuth
+  // OAuth fields - googleId, facebookId for OAuth providers
+  googleId: varchar("google_id").unique(), // Google OAuth user ID
   facebookId: varchar("facebook_id").unique(), // Facebook OAuth user ID
+  replitId: varchar("replit_id").unique(), // Deprecated: Legacy Replit OAuth ID (for migration)
   firstName: varchar("first_name"),
   lastName: varchar("last_name"),
   profileImageUrl: varchar("profile_image_url"),
@@ -165,15 +166,16 @@ export const insertUserSchema = createInsertSchema(users).omit({
   updatedAt: true,
 });
 
-// Upsert schema for OAuth users (Replit Auth, Facebook)
+// Upsert schema for OAuth users (Google, Facebook)
 export const upsertUserSchema = createInsertSchema(users).pick({
   id: true, // Required for upsert
   email: true,
   firstName: true,
   lastName: true,
   profileImageUrl: true,
-  replitId: true, // For Replit Auth
+  googleId: true, // For Google OAuth
   facebookId: true, // For Facebook OAuth
+  replitId: true, // Deprecated: Legacy Replit OAuth (kept for migration)
 });
 
 export const insertTrackSchema = createInsertSchema(tracks).omit({
