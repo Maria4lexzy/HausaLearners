@@ -62,7 +62,7 @@ LingoQuest is a community-driven, gamified language learning platform where user
 ### Core Tables
 - **sessions**: PostgreSQL-backed session storage for production persistence
 - **users**: User accounts with OAuth and password auth support, XP, level, streak tracking
-  - OAuth fields: replitId, firstName, lastName, profileImageUrl (nullable)
+  - OAuth fields: googleId, facebookId, firstName, lastName, profileImageUrl (nullable)
   - Password fields: username, password (nullable for OAuth users)
 - **tracks**: Learning tracks (Basics, Travel, Food, etc.)
 - **lessons**: Individual lessons with JSON question data
@@ -75,8 +75,10 @@ LingoQuest is a community-driven, gamified language learning platform where user
 ## API Endpoints
 
 ### Authentication
-- `GET /api/login` - Initiate Replit OAuth flow (Google, GitHub, Apple, X, email/password)
-- `GET /api/callback` - OAuth callback handler (Passport.js)
+- `GET /api/auth/google` - Initiate Google OAuth flow
+- `GET /api/auth/google/callback` - Google OAuth callback handler
+- `GET /api/auth/facebook` - Initiate Facebook OAuth flow
+- `GET /api/auth/facebook/callback` - Facebook OAuth callback handler
 - `POST /api/auth/register` - Register new user (username, email, password)
 - `POST /api/auth/login` - Login user (email, password)
 - `POST /api/auth/logout` - Clear session and log out
@@ -161,14 +163,16 @@ LingoQuest is a community-driven, gamified language learning platform where user
     - Full mobile responsiveness with flex-wrap and responsive grids
     - E2E tested: authentication, dashboard display, navigation, hover interactions ✅
 12. **🔐 Production-Ready Authentication** (Latest):
-    - Integrated Replit Auth (OAuth) supporting Google, GitHub, Apple, X, and email/password
-    - Implemented PostgreSQL session store (connect-pg-simple) replacing MemoryStore
-    - Added OAuth fields to users table (replitId, firstName, lastName, profileImageUrl)
+    - Removed Replit Auth, integrated direct Google OAuth and Facebook OAuth via Passport.js
+    - Implemented passport-google-oauth20 and passport-facebook strategies
+    - PostgreSQL session store (connect-pg-simple) for production persistence
+    - Added OAuth fields to users table (googleId, facebookId, firstName, lastName, profileImageUrl)
     - Session normalization middleware sets `req.session.userId` for both OAuth and password users
-    - Updated User type to support both OAuth and traditional authentication
+    - Fixed OAuth callback handlers to explicitly set req.session.userId before redirecting
+    - Updated storage.ts upsertUser to prioritize OAuth provider lookups (googleId/facebookId) before email fallback
+    - Updated User type to support Google OAuth, Facebook OAuth, and traditional authentication
     - Fixed AppHeader to handle OAuth users without username (displays firstName+lastName or email)
-    - Fixed login form to use email field (matching backend expectations)
-    - Created comprehensive DEPLOYMENT.md guide with production checklist and Autoscale setup
+    - Frontend login/register pages with separate Google and Facebook login buttons
     - End-to-end tested: password registration, email/password login, protected routes, session persistence ✅
 
 ## User Preferences
@@ -198,11 +202,12 @@ LingoQuest is a community-driven, gamified language learning platform where user
 ### Current Implementation Status
 **✅ Production-Ready MVP:**
 - ✅ Database schema with all tables migrated including sessions table
-- ✅ **Dual Authentication System** (Production-Ready):
-  - **Replit Auth (OAuth)**: Google, GitHub, Apple, X, email/password via Passport.js
+- ✅ **Triple Authentication System** (Production-Ready):
+  - **Google OAuth**: passport-google-oauth20 with direct integration
+  - **Facebook OAuth**: passport-facebook with direct integration
   - **Password Auth**: Traditional email/password with bcrypt hashing (SALT_ROUNDS=10)
   - **PostgreSQL Session Store**: connect-pg-simple for production persistence (7-day TTL)
-  - **Session Normalization**: Both OAuth and password users use `req.session.userId`
+  - **Session Normalization**: All auth methods use `req.session.userId`
   - Secure cookies (httpOnly, sameSite: lax, secure in production)
   - Session regeneration on login/register (prevents fixation)
   - Authorization middleware (requireAuth, requireAdmin, requireSelfOrAdmin)
@@ -239,10 +244,10 @@ LingoQuest is a community-driven, gamified language learning platform where user
 **✅ Production-Ready Components:**
 - PostgreSQL session storage (no crashes, multi-instance support)
 - Bcrypt password hashing with secure session management
-- OAuth integration with zero configuration (Replit Auth)
+- Google OAuth and Facebook OAuth via Passport.js
 - HTTPS enforcement in production (automatic via Replit)
 - Authorization and authentication middleware
-- Database schema optimized for both auth methods
+- Database schema optimized for all three auth methods
 
 ## Known Limitations
 - Admin features require manual user role assignment in database (`isAdmin` column in `users` table)
