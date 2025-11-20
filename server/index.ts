@@ -2,13 +2,11 @@ import "dotenv/config";
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { setupAuth } from "./replitAuth";
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-
-// Session setup is handled by replitAuth.ts (PostgreSQL-backed sessions)
-// This provides production-ready session persistence
 
 app.use((req, res, next) => {
   const start = Date.now();
@@ -41,6 +39,10 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  // Setup authentication (OAuth + sessions) before routes
+  // This provides production-ready session persistence with PostgreSQL
+  await setupAuth(app);
+  
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {

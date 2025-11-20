@@ -127,7 +127,7 @@ export async function setupAuth(app: Express) {
       // Explicitly set session userId before redirecting
       if (req.user && req.user.userId) {
         req.session.userId = req.user.userId;
-        req.session.save((err) => {
+        req.session.save((err: any) => {
           if (err) {
             console.error("Session save error:", err);
           }
@@ -153,7 +153,7 @@ export async function setupAuth(app: Express) {
       // Explicitly set session userId before redirecting
       if (req.user && req.user.userId) {
         req.session.userId = req.user.userId;
-        req.session.save((err) => {
+        req.session.save((err: any) => {
           if (err) {
             console.error("Session save error:", err);
           }

@@ -35,7 +35,7 @@ export async function registerUser(username: string, email: string, password: st
 
 export async function loginUser(email: string, password: string) {
   const user = await storage.getUserByEmail(email);
-  if (!user) {
+  if (!user || !user.password) {
     throw new Error("Invalid credentials");
   }
 
