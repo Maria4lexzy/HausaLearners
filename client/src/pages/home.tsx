@@ -1,11 +1,24 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { BadgeDisplay } from "@/components/badge-display";
-import { ArrowRight, BookOpen, Trophy, Flame, Zap, Target, Award, Map, Sparkles, Droplet } from "lucide-react";
+import { ArrowRight, Trophy } from "lucide-react";
 import { Link } from "wouter";
 import { useCurrentUser } from "@/lib/user-context";
 import { useQuery } from "@tanstack/react-query";
 import { LeatherCard, KolaNutProgress, HennaDivider } from "@/components/hausa-gamification";
+import { 
+  TurbanIcon, 
+  CalabashIcon, 
+  IncenseIcon, 
+  TalkingDrumIcon,
+  MinaretIcon,
+  CamelIcon,
+  LeatherScrollIcon,
+  HennaIcon,
+  CowrieIcon,
+  ZamaniPatternIcon,
+  KolaNutIcon
+} from "@/components/hausa-icons";
 
 interface Badge {
   id: number;
@@ -54,18 +67,13 @@ export default function Home() {
   const userName = user.firstName || user.username || "Almajiri";
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 fulani-diamonds">
       {/* Hero Section - Hausa Cultural Welcome */}
-      <LeatherCard embossed className="relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0" style={{
-            backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 19px, hsl(var(--henna)) 19px, hsl(var(--henna)) 20px), repeating-linear-gradient(90deg, transparent, transparent 19px, hsl(var(--henna)) 19px, hsl(var(--henna)) 20px)',
-          }}></div>
-        </div>
+      <LeatherCard embossed className="relative overflow-hidden desert-waves">
         <div className="relative z-10 space-y-4">
           <div className="flex flex-wrap items-center gap-3">
-            <div className="flex h-14 w-14 sm:h-16 sm:w-16 shrink-0 items-center justify-center rounded-full bg-primary/20 border-2 border-primary shadow-lg shadow-primary/20">
-              <Sparkles className="h-7 w-7 sm:h-8 sm:w-8 text-primary" />
+            <div className="flex h-14 w-14 sm:h-16 sm:w-16 shrink-0 items-center justify-center rounded-full bg-primary/20 border-2 border-primary shadow-lg shadow-primary/20 animate-turban-sway">
+              <TurbanIcon className="h-7 w-7 sm:h-8 sm:w-8 text-primary" size={32} />
             </div>
             <div className="flex-1 min-w-0">
               <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight">
@@ -82,14 +90,14 @@ export default function Home() {
       {/* Stats Dashboard - Hausa Cultural Style */}
       <div className="grid gap-4 md:grid-cols-4">
         {/* Level Card - Malam Status */}
-        <Card className="relative overflow-hidden border-2 border-primary/30 bg-gradient-to-br from-primary/5 to-transparent">
+        <Card className="relative overflow-hidden border-2 border-primary/30 bg-gradient-to-br from-primary/5 to-transparent mud-cloth">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/20 text-primary">
-                <Target className="h-6 w-6" />
+                <TurbanIcon size={24} />
               </div>
               <div className="flex-1">
-                <p className="text-xs font-medium text-muted-foreground">MALAM (LEVEL)</p>
+                <p className="text-xs font-medium text-muted-foreground font-hausa">MALAM (LEVEL)</p>
                 <p className="text-2xl font-bold text-primary">{user.level}</p>
               </div>
             </div>
@@ -97,14 +105,14 @@ export default function Home() {
         </Card>
 
         {/* XP Card - Calabash Count */}
-        <Card className="relative overflow-hidden border-2 border-success/30 bg-gradient-to-br from-success/5 to-transparent">
+        <Card className="relative overflow-hidden border-2 border-success/30 bg-gradient-to-br from-success/5 to-transparent mud-cloth">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-success/20 text-success">
-                <Droplet className="h-6 w-6" />
+                <CalabashIcon size={24} />
               </div>
               <div className="flex-1">
-                <p className="text-xs font-medium text-muted-foreground">KWALABAR (XP)</p>
+                <p className="text-xs font-medium text-muted-foreground font-hausa">KWALABAR (XP)</p>
                 <p className="text-2xl font-bold text-success">{user.xp}</p>
               </div>
             </div>
@@ -112,14 +120,14 @@ export default function Home() {
         </Card>
 
         {/* Streak Card - Incense Burner */}
-        <Card className="relative overflow-hidden border-2 border-primary/30 bg-gradient-to-br from-primary/5 to-transparent">
+        <Card className="relative overflow-hidden border-2 border-primary/30 bg-gradient-to-br from-primary/5 to-transparent mud-cloth">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/20 text-primary">
-                <Flame className="h-6 w-6" />
+                <IncenseIcon size={24} />
               </div>
               <div className="flex-1">
-                <p className="text-xs font-medium text-muted-foreground">RANAKU (STREAK)</p>
+                <p className="text-xs font-medium text-muted-foreground font-hausa">RANAKU (STREAK)</p>
                 <p className="text-2xl font-bold text-primary">{user.streak}</p>
               </div>
             </div>
@@ -127,14 +135,14 @@ export default function Home() {
         </Card>
 
         {/* Badges Card - Achievements */}
-        <Card className="relative overflow-hidden border-2 border-warning/30 bg-gradient-to-br from-warning/5 to-transparent">
+        <Card className="relative overflow-hidden border-2 border-warning/30 bg-gradient-to-br from-warning/5 to-transparent mud-cloth">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-warning/20 text-warning">
-                <Award className="h-6 w-6" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-warning/20 text-warning animate-talking-drum-bounce">
+                <TalkingDrumIcon size={24} />
               </div>
               <div className="flex-1">
-                <p className="text-xs font-medium text-muted-foreground">LAMBOBI (BADGES)</p>
+                <p className="text-xs font-medium text-muted-foreground font-hausa">LAMBOBI (BADGES)</p>
                 <p className="text-2xl font-bold text-warning">
                   {badgesWithEarnedStatus.filter(b => b.earned).length}/{badgesWithEarnedStatus.length}
                 </p>
@@ -168,8 +176,8 @@ export default function Home() {
       {/* Quick Actions - Hausa Quest Cards */}
       <div className="space-y-4">
         <div className="flex items-center gap-2">
-          <Map className="h-5 w-5 text-primary" />
-          <h2 className="text-xl font-semibold">Ayyukan Koyo</h2>
+          <CamelIcon className="h-5 w-5 text-primary" size={20} />
+          <h2 className="text-xl font-semibold font-hausa">Ayyukan Koyo</h2>
           <span className="text-sm text-muted-foreground">(Available Quests)</span>
         </div>
         <div className="grid gap-4 md:grid-cols-3">
@@ -179,10 +187,10 @@ export default function Home() {
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3 flex-1">
                     <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 text-primary group-hover:scale-110 transition-transform">
-                      <BookOpen className="h-7 w-7" />
+                      <MinaretIcon className="h-7 w-7" size={28} />
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-lg font-semibold">Ci Gaba</h3>
+                      <h3 className="text-lg font-semibold font-hausa">Ci Gaba</h3>
                       <p className="text-sm text-muted-foreground">Continue learning journey</p>
                     </div>
                   </div>
@@ -191,7 +199,7 @@ export default function Home() {
                 <HennaDivider />
                 <div className="flex items-center gap-2">
                   <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
-                    <Droplet className="h-3 w-3 mr-1" />
+                    <CalabashIcon className="h-3 w-3 mr-1" size={12} />
                     +10 calabashes
                   </Badge>
                 </div>
@@ -208,7 +216,7 @@ export default function Home() {
                       <Trophy className="h-7 w-7 animate-golden-glow" />
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-lg font-semibold">Gwaninta</h3>
+                      <h3 className="text-lg font-semibold font-hausa">Gwaninta</h3>
                       <p className="text-sm text-muted-foreground">Compete with scholars</p>
                     </div>
                   </div>
@@ -217,7 +225,7 @@ export default function Home() {
                 <HennaDivider />
                 <div className="flex items-center gap-2">
                   <Badge variant="outline" className="bg-warning/10 text-warning border-warning/20">
-                    <Trophy className="h-3 w-3 mr-1" />
+                    <TalkingDrumIcon className="h-3 w-3 mr-1" size={12} />
                     Sarkin Karatu
                   </Badge>
                 </div>
@@ -231,10 +239,10 @@ export default function Home() {
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3 flex-1">
                     <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-success/20 to-success/10 text-success group-hover:scale-110 transition-transform">
-                      <BookOpen className="h-7 w-7" />
+                      <LeatherScrollIcon className="h-7 w-7" size={28} />
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-lg font-semibold">Kalmomi</h3>
+                      <h3 className="text-lg font-semibold font-hausa">Kalmomi</h3>
                       <p className="text-sm text-muted-foreground">Review vocabulary</p>
                     </div>
                   </div>
@@ -243,7 +251,7 @@ export default function Home() {
                 <HennaDivider />
                 <div className="flex items-center gap-2">
                   <Badge variant="outline" className="bg-success/10 text-success border-success/20">
-                    <Target className="h-3 w-3 mr-1" />
+                    <KolaNutIcon className="h-3 w-3 mr-1" size={12} />
                     Tunawa
                   </Badge>
                 </div>

@@ -538,4 +538,93 @@
   .font-hausa {
     font-family: var(--font-hausa);
   }
+
+  /* ============================================
+     HAUSA BACKGROUND PATTERNS
+     ============================================ */
+
+  /* Fulani Geometric Pattern - Diamond lattice */
+  .fulani-diamonds {
+    background-image: 
+      repeating-linear-gradient(
+        45deg,
+        hsl(var(--primary) / 0.03) 0,
+        hsl(var(--primary) / 0.03) 20px,
+        transparent 20px,
+        transparent 40px,
+        hsl(var(--success) / 0.03) 40px,
+        hsl(var(--success) / 0.03) 60px,
+        transparent 60px,
+        transparent 80px
+      ),
+      repeating-linear-gradient(
+        -45deg,
+        hsl(var(--primary) / 0.03) 0,
+        hsl(var(--primary) / 0.03) 20px,
+        transparent 20px,
+        transparent 40px,
+        hsl(var(--success) / 0.03) 40px,
+        hsl(var(--success) / 0.03) 60px,
+        transparent 60px,
+        transparent 80px
+      );
+  }
+
+  /* Desert Dune Waves */
+  .desert-waves {
+    background-image: 
+      radial-gradient(
+        ellipse 100% 50% at 50% 0%,
+        hsl(var(--primary) / 0.05) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        ellipse 100% 50% at 50% 100%,
+        hsl(var(--success) / 0.05) 0%,
+        transparent 50%
+      );
+    background-size: 100% 40px;
+    background-position: 0 0, 0 20px;
+  }
+
+  /* Traditional Mud-Cloth Pattern */
+  .mud-cloth {
+    background-image: 
+      radial-gradient(circle at 20% 20%, hsl(var(--primary) / 0.08) 1%, transparent 1%),
+      radial-gradient(circle at 80% 80%, hsl(var(--success) / 0.08) 1%, transparent 1%),
+      radial-gradient(circle at 40% 60%, hsl(var(--gold) / 0.06) 1%, transparent 1%);
+    background-size: 60px 60px, 60px 60px, 80px 80px;
+  }
+
+  /* Harmattan Haze - Desert mist effect */
+  .harmattan-haze::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: 
+      radial-gradient(
+        circle at 30% 40%,
+        hsl(var(--primary) / 0.03) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        circle at 70% 60%,
+        hsl(var(--success) / 0.03) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        circle at 50% 80%,
+        hsl(var(--gold) / 0.02) 0%,
+        transparent 50%
+      );
+    animation: harmattan-drift 30s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  @keyframes harmattan-drift {
+    0%, 100% { opacity: 0.3; transform: translateX(0) translateY(0); }
+    33% { opacity: 0.5; transform: translateX(-10px) translateY(5px); }
+    66% { opacity: 0.4; transform: translateX(10px) translateY(-5px); }
+  }
 }
