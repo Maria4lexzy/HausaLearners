@@ -1,0 +1,36 @@
+A stunning, gamified Hausa-language learning web app UI that feels like Boot.dev but deeply rooted in Hausa/Northern Nigerian culture. Dark-mode first with a rich, warm desert-night palette: deep indigo #0f172a background, burnt orange #ea580c accents, emerald green #10b981 for success, and gold #fbbf24 for rewards.
+
+Dashboard screen (desktop 16:10):
+Left sidebar styled like embroidered leather book spines (zamanen zamani motif). Each learning track is a glowing “Almajiri to Malam” path:
+• “Hausa Explorer” (beginner)
+• “Mai Gida” (intermediate, “householder”)
+• “Sarkin Karatu” (advanced, “King of Learning”)
+Progress shown as a kola-nut counter that fills with real-looking kola nuts, current level displayed as a beautifully calligraphed Hausa title in Ajami script glowing gold (e.g., “Malam Level 34”).
+
+Main area: your customizable avatar as a young Hausa scholar in flowing alkyabba or babban riga with intricate embroidery, standing in front of a stylized 3D-rendered ancient Kano city wall at sunset. Floating islands above are replaced by nine historic Emirate city gates (Kano, Zaria, Katsina, Daura, etc.). Each gate represents a skill (Vocabulary, Grammar, Listening, Speaking, Proverbs, Ajami Script, Cultural Nuances, Poetry & Praise-Singing). Gates open with henna-style patterns when completed.
+
+Center quest card: ornate leather-bound card with embroidered borders. Current challenge in elegant Hausa calligraphy + Latin script + English translation, e.g., “A ina za ka je yau?” (“Where are you going today?”). Input field styled like an ancient inkwell and reed pen, voice recording button shaped like a talking drum (hourglass-shaped dengan). When correct, golden zanna mat stitching patterns burst across the screen, +200 XP appears as scattering cowries, and the avatar’s cap (hula) gets a new embroidered star.
+
+Mascot: a wise, mischievous talking parrot wearing a tiny turban and miniature fulani leather amulet necklace, name “Mugu the Parrot” (because parrots famously mimic speech). Pops up bottom-right with speech bubbles in Hausa slang: “Kai! Ka ji Hausa kamar ɗan Zazzau!” (“You speak Hausa like a true Zaria boy!”) or gentle Socratic nudges when stuck.
+
+Top bar:
+• XP bar styled like a Fulani milk calabash filling with fresh nono (yogurt)
+• Daily streak shown as a burning incense burner (ƙwano) with rising smoke forming the number
+• “Litattafan Gargajiya” button (traditional books) opens the searchable Grimoire: leather-bound pages with illuminated Ajami borders, audio of native speakers, proverbs with illustrations of baobab trees, market scenes, durbar horses, etc.
+
+Right sidebar: “Ƙungiyar Masu Karatu” guild chat + Mugu the Parrot AI mentor who drops classic Hausa proverbs as hints.
+
+Visual details:
+• Subtle animated harmattan dust particles
+• Intricate zanna & henna patterns as dividers
+• Islamic geometric patterns used tastefully (no figurative restrictions broken)
+• Background adhan-like ambient soundtrack (very subtle)
+• Fonts: mix of modern Latin + beautiful Ajami-style display font
+• Micro-animations: cowries clinking, talking drum bounce on voice submit, turban tassels swaying
+
+Ultra-detailed cinematic screenshot of the full dashboard at golden hour, warm desert lighting, rich textures, professional yet deeply culturally authentic, 8k.
+Quick cultural tweaks you can add
+
+For mobile: --ar 9:16 mobile view, bottom navigation icons: Mosque minaret (Map), Talking drum (Quests), Leather book (Grimoire), Turban (Profile)
+Ramadan mode: moon phase streak counter, special iftar reward animations
+Durbar celebration: when reaching Level 50, full-screen animated horse parade with praise-singers shouting your username in Hausa

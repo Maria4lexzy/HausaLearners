@@ -1,8 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Scheherazade+New:wght@400;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* BOOT.DEV-INSPIRED DARK MODE (DEFAULT) */
+/* HAUSA DESERT-NIGHT THEME (DEFAULT) */
 :root {
   --button-outline: rgba(255,255,255, .12);
   --badge-outline: rgba(255,255,255, .08);
@@ -14,87 +16,89 @@
   --elevate-1: rgba(255,255,255, .05);
   --elevate-2: rgba(255,255,255, .10);
 
-  /* Boot.dev dark backgrounds - deep blue-black like midnight code editor */
+  /* Deep indigo desert-night sky */
   --background: 222 47% 11%;
 
-  /* Bright text for dark mode */
-  --foreground: 210 40% 98%;
+  /* Warm near-white text like desert moonlight */
+  --foreground: 40 10% 98%;
 
-  /* Subtle borders */
-  --border: 215 28% 25%;
+  /* Desert sand borders */
+  --border: 222 25% 28%;
 
-  /* Elevated dark panels */
-  --card: 217 33% 17%;
+  /* Elevated desert stone panels */
+  --card: 222 35% 18%;
 
-  --card-foreground: 210 40% 98%;
+  --card-foreground: 40 10% 98%;
 
-  --card-border: 215 28% 28%;
+  --card-border: 222 28% 30%;
 
-  /* Darker sidebar for depth */
+  /* Darker sidebar - traditional leather binding */
   --sidebar: 222 47% 9%;
 
-  --sidebar-foreground: 210 40% 98%;
+  --sidebar-foreground: 40 10% 98%;
 
-  --sidebar-border: 215 28% 20%;
+  --sidebar-border: 222 28% 20%;
 
-  /* Neon green for primary actions */
-  --sidebar-primary: 142 76% 60%;
+  /* Burnt orange for primary actions (traditional dye) */
+  --sidebar-primary: 18 92% 50%;
 
-  --sidebar-primary-foreground: 222 47% 11%;
+  --sidebar-primary-foreground: 40 10% 98%;
 
-  --sidebar-accent: 215 28% 22%;
+  --sidebar-accent: 222 25% 22%;
 
-  --sidebar-accent-foreground: 210 40% 98%;
+  --sidebar-accent-foreground: 40 10% 98%;
 
-  --sidebar-ring: 142 76% 60%;
+  --sidebar-ring: 18 92% 50%;
 
-  --popover: 217 33% 20%;
+  --popover: 222 33% 20%;
 
-  --popover-foreground: 210 40% 98%;
+  --popover-foreground: 40 10% 98%;
 
-  --popover-border: 215 28% 30%;
+  --popover-border: 222 28% 30%;
 
-  /* Vibrant neon green for XP and success */
-  --primary: 142 76% 60%;
+  /* Burnt orange primary (desert sunset, traditional dye) */
+  --primary: 18 92% 50%;
 
-  --primary-foreground: 222 47% 11%;
+  --primary-foreground: 40 10% 98%;
 
-  /* Electric purple for secondary actions */
+  /* Electric purple for secondary actions (kept from Boot.dev) */
   --secondary: 262 83% 58%;
 
-  --secondary-foreground: 210 40% 98%;
+  --secondary-foreground: 40 10% 98%;
 
   /* Muted backgrounds */
-  --muted: 215 28% 23%;
+  --muted: 222 28% 23%;
 
-  --muted-foreground: 215 20% 65%;
+  --muted-foreground: 40 5% 65%;
 
-  /* Bright cyan accent */
+  /* Bright cyan accent (kept from Boot.dev) */
   --accent: 199 89% 48%;
 
   --accent-foreground: 222 47% 11%;
 
   /* Bright red for errors */
-  --destructive: 0 91% 71%;
+  --destructive: 0 84% 60%;
 
-  --destructive-foreground: 222 47% 11%;
+  --destructive-foreground: 40 10% 98%;
 
-  --input: 215 28% 30%;
-  --ring: 142 76% 60%;
+  --input: 222 28% 30%;
+  --ring: 18 92% 50%;
   
-  /* Gamification chart colors - all vibrant */
-  --chart-1: 142 76% 60%; /* Neon green */
-  --chart-2: 262 83% 58%; /* Electric purple */
-  --chart-3: 199 89% 48%; /* Bright cyan */
-  --chart-4: 43 96% 56%;  /* Vibrant amber */
-  --chart-5: 0 91% 71%;   /* Bright red */
+  /* Gamification chart colors - Hausa cultural palette */
+  --chart-1: 142 76% 45%; /* Emerald green - prosperity */
+  --chart-2: 48 96% 53%;  /* Gold - rewards */
+  --chart-3: 18 92% 50%;  /* Burnt orange - primary */
+  --chart-4: 43 96% 56%;  /* Amber - kola nut */
+  --chart-5: 262 83% 58%; /* Purple - special */
 
   --font-sans: Inter, sans-serif;
   --font-serif: Georgia, serif;
   --font-mono: JetBrains Mono, monospace;
+  --font-hausa: Amiri, serif;
+  --font-ajami: Scheherazade New, serif;
   --radius: .5rem; /* 8px */
   
-  /* Dark mode shadows with more depth */
+  /* Dark mode shadows with warm desert tones */
   --shadow-2xs: 0px 1px 2px 0px hsl(222 47% 5% / 0.30);
   --shadow-xs: 0px 1px 3px 0px hsl(222 47% 5% / 0.40);
   --shadow-sm: 0px 2px 4px -1px hsl(222 47% 5% / 0.35), 0px 1px 2px -1px hsl(222 47% 5% / 0.40);
@@ -106,13 +110,23 @@
   --tracking-normal: 0em;
   --spacing: 0.25rem;
 
-  /* Neon green for XP/success/achievements */
-  --success: 142 76% 60%;
-  --success-foreground: 222 47% 11%;
+  /* Emerald green for XP/success/achievements (fresh nono in calabash) */
+  --success: 142 76% 45%;
+  --success-foreground: 40 10% 98%;
 
-  /* Vibrant amber for warnings/review */
+  /* Golden reward color (royal status, gold jewelry) */
+  --gold: 48 96% 53%;
+  --gold-foreground: 222 47% 11%;
+
+  /* Amber for warnings/review (kola nut) */
   --warning: 43 96% 56%;
   --warning-foreground: 222 47% 11%;
+
+  /* Cultural pattern colors */
+  --henna: 30 30% 40%;
+  --leather: 25 25% 28%;
+  --cowrie: 40 15% 85%;
+  --indigo-dye: 230 50% 25%;
 
   /* Automatically computed borders - intensity can be controlled by the user by the --opaque-button-border-intensity setting */
 
@@ -374,5 +388,154 @@
   .border.active-elevate-2:not(.no-active-interaction-elevate)::after,
   .border.hover-elevate:not(.no-hover-interaction-elevate)::after {
     inset: -1px;
+  }
+
+  /* Hausa Cultural Animations */
+  @keyframes harmattan-dust {
+    0%, 100% {
+      transform: translateY(0) translateX(0);
+      opacity: 0.3;
+    }
+    50% {
+      transform: translateY(-20px) translateX(10px);
+      opacity: 0.6;
+    }
+  }
+
+  @keyframes incense-smoke {
+    0% {
+      transform: translateY(0) scale(1);
+      opacity: 0.8;
+    }
+    100% {
+      transform: translateY(-40px) scale(1.5);
+      opacity: 0;
+    }
+  }
+
+  @keyframes cowrie-scatter {
+    0% {
+      transform: translate(0, 0) rotate(0deg);
+      opacity: 1;
+    }
+    100% {
+      transform: translate(var(--cowrie-x), var(--cowrie-y)) rotate(360deg);
+      opacity: 0;
+    }
+  }
+
+  @keyframes henna-draw {
+    0% {
+      stroke-dashoffset: 1000;
+      opacity: 0.5;
+    }
+    100% {
+      stroke-dashoffset: 0;
+      opacity: 1;
+    }
+  }
+
+  @keyframes calabash-fill {
+    0% {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes turban-sway {
+    0%, 100% {
+      transform: rotate(-2deg);
+    }
+    50% {
+      transform: rotate(2deg);
+    }
+  }
+
+  @keyframes talking-drum-bounce {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.1);
+    }
+  }
+
+  @keyframes golden-glow {
+    0%, 100% {
+      filter: drop-shadow(0 0 4px hsl(var(--gold)));
+    }
+    50% {
+      filter: drop-shadow(0 0 12px hsl(var(--gold)));
+    }
+  }
+
+  /* Utility classes for cultural animations */
+  .animate-harmattan-dust {
+    animation: harmattan-dust 8s ease-in-out infinite;
+  }
+
+  .animate-incense-smoke {
+    animation: incense-smoke 3s ease-out infinite;
+  }
+
+  .animate-cowrie-scatter {
+    animation: cowrie-scatter 1s ease-out forwards;
+  }
+
+  .animate-henna-draw {
+    animation: henna-draw 2s ease-out forwards;
+  }
+
+  .animate-calabash-fill {
+    animation: calabash-fill 1.5s ease-out forwards;
+  }
+
+  .animate-turban-sway {
+    animation: turban-sway 2s ease-in-out infinite;
+  }
+
+  .animate-talking-drum-bounce {
+    animation: talking-drum-bounce 0.5s ease-in-out;
+  }
+
+  .animate-golden-glow {
+    animation: golden-glow 2s ease-in-out infinite;
+  }
+
+  /* Leather texture effect */
+  .leather-texture {
+    background-image: 
+      linear-gradient(45deg, transparent 30%, hsl(var(--leather)) 30%, hsl(var(--leather)) 50%, transparent 50%),
+      linear-gradient(-45deg, transparent 30%, hsl(var(--leather)) 30%, hsl(var(--leather)) 50%, transparent 50%);
+    background-size: 4px 4px;
+    background-color: hsl(var(--card));
+  }
+
+  /* Henna pattern border */
+  .henna-border {
+    border-image: repeating-linear-gradient(
+      45deg,
+      hsl(var(--henna)),
+      hsl(var(--henna)) 10px,
+      transparent 10px,
+      transparent 20px
+    ) 1;
+  }
+
+  /* Ajami script font class */
+  .font-ajami {
+    font-family: var(--font-ajami);
+    font-weight: 700;
+    color: hsl(var(--gold));
+    text-shadow: 0 0 20px hsl(var(--gold) / 0.5);
+  }
+
+  /* Hausa font class */
+  .font-hausa {
+    font-family: var(--font-hausa);
   }
 }
