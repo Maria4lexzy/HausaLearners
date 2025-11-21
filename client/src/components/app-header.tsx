@@ -3,8 +3,9 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useCurrentUser } from "@/lib/user-context";
-import { LogOut, User, Shield } from "lucide-react";
+import { LogOut, Shield } from "lucide-react";
 import { useLocation } from "wouter";
+import { CalabashXPBar, IncenseStreakCounter } from "@/components/hausa-gamification";
 
 export function AppHeader() {
   const { user, logout } = useCurrentUser();
@@ -30,16 +31,32 @@ export function AppHeader() {
     .toUpperCase()
     .slice(0, 2);
 
+  const currentLevelProgress = user.xp % 100;
+  const xpForNextLevel = 100;
+
   return (
-    <header className="flex items-center justify-between border-b p-4">
-      <SidebarTrigger data-testid="button-sidebar-toggle" />
+    <header className="flex items-center justify-between gap-4 border-b p-4 bg-card/50 backdrop-blur-sm">
+      <div className="flex items-center gap-4">
+        <SidebarTrigger data-testid="button-sidebar-toggle" />
+        
+        <div className="hidden lg:flex items-center gap-6">
+          <CalabashXPBar 
+            currentXP={currentLevelProgress} 
+            maxXP={xpForNextLevel} 
+            level={user.level} 
+          />
+          <div className="h-6 w-px bg-border" />
+          <IncenseStreakCounter streak={user.streak} />
+        </div>
+      </div>
       
       <div className="flex items-center gap-4">
         <div className="hidden sm:flex flex-col items-end">
           <p className="text-sm font-medium" data-testid="text-username">{displayName}</p>
-          <p className="text-xs text-muted-foreground">
-            Level {user.level} • {user.xp} XP
-          </p>
+          <div className="flex items-center gap-3 lg:hidden">
+            <span className="text-xs text-muted-foreground">Malam {user.level}</span>
+            <span className="text-xs text-muted-foreground">{user.streak} ranaku</span>
+          </div>
         </div>
 
         <DropdownMenu>

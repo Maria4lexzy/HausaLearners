@@ -1,179 +1,7 @@
 # LingoQuest - Gamified Language Learning Platform
 
 ## Overview
-LingoQuest is a community-driven, gamified language learning platform where users learn through interactive lessons, track vocabulary with memory-strength scoring, and contribute their own content. Built with a zero-cost tech stack (Supabase free tier), it features XP systems, achievement badges, streaks, leaderboards, and admin moderation workflows.
-
-## Tech Stack
-- **Frontend**: React + TypeScript + Wouter + TailwindCSS + shadcn/ui
-- **Backend**: Express.js + Drizzle ORM
-- **Database**: Supabase PostgreSQL (free tier)
-- **State Management**: TanStack Query v5
-
-## Project Structure
-```
-├── client/               # Frontend React application
-│   ├── src/
-│   │   ├── components/   # Reusable UI components
-│   │   ├── pages/        # Page-level components
-│   │   └── lib/          # Utilities and query client
-├── server/               # Express backend
-│   ├── routes.ts         # API endpoints
-│   └── storage.ts        # Database access layer
-├── db/                   # Database configuration
-│   ├── index.ts          # Drizzle client
-│   └── seed.ts           # Initial data seeding
-├── shared/
-│   └── schema.ts         # Shared TypeScript types & Drizzle schemas
-└── migrations/           # Database migrations
-```
-
-## Key Features Implemented
-
-### 1. Gamification System
-- **XP & Levels**: Users earn XP for completing lessons, leveling up every 100 XP
-- **Streaks**: Track daily learning streaks with visual flame indicators
-- **Badges**: Achievement system for milestones (first lesson, 7-day streak, 100 XP, etc.)
-- **Leaderboards**: Global and language-specific rankings
-
-### 2. Learning Experience
-- **Skill Tree**: Visual progression through lesson tracks
-- **Multiple Question Types**:
-  - Multiple Choice
-  - Fill in the Blank
-  - Flashcards
-- **Interactive Lesson Player**: Full-screen immersive learning mode
-- **Audio Support**: Optional pronunciation audio for questions
-
-### 3. Vocabulary Tracking
-- **Personal Vocabulary Book**: Auto-populated from completed lessons
-- **Memory Strength System**:
-  - Known (green): Consistently correct answers
-  - Fuzzy (amber): Some incorrect answers
-  - Forgotten (red): Multiple incorrect answers
-- **Smart Review**: Filter and practice weak vocabulary
-
-### 4. Community Contributions
-- **Lesson Creation**: Users can submit new lessons with structured validation
-- **Track Proposals**: Suggest entirely new learning tracks
-- **Admin Dashboard**: Review, approve, edit, or reject contributions with feedback
-
-## Database Schema
-
-### Core Tables
-- **sessions**: PostgreSQL-backed session storage for production persistence
-- **users**: User accounts with OAuth and password auth support, XP, level, streak tracking
-  - OAuth fields: googleId, facebookId, firstName, lastName, profileImageUrl (nullable)
-  - Password fields: username, password (nullable for OAuth users)
-- **tracks**: Learning tracks (Basics, Travel, Food, etc.)
-- **lessons**: Individual lessons with JSON question data
-- **vocabulary**: User-specific vocabulary with memory tracking
-- **user_lessons**: Progress tracking for lesson completion
-- **badges**: Achievement definitions
-- **user_badges**: Awarded badges per user
-- **contributions**: Community-submitted content awaiting review
-
-## API Endpoints
-
-### Authentication
-- `GET /api/auth/google` - Initiate Google OAuth flow
-- `GET /api/auth/google/callback` - Google OAuth callback handler
-- `GET /api/auth/facebook` - Initiate Facebook OAuth flow
-- `GET /api/auth/facebook/callback` - Facebook OAuth callback handler
-- `POST /api/auth/register` - Register new user (username, email, password)
-- `POST /api/auth/login` - Login user (email, password)
-- `POST /api/auth/logout` - Clear session and log out
-- `GET /api/auth/me` - Get current authenticated user
-
-### Database Management
-- `POST /api/seed` - Initialize database with sample tracks, lessons, and badges
-
-### Tracks
-- `GET /api/tracks` - List all tracks
-- `GET /api/tracks/:id` - Get single track
-- `POST /api/tracks` - Create new track (admin/approved contributions)
-
-### Lessons
-- `GET /api/tracks/:trackId/lessons` - Get lessons for a track
-- `GET /api/lessons/:id` - Get single lesson
-- `POST /api/lessons` - Create new lesson
-- `POST /api/lessons/:lessonId/complete` - Mark lesson complete, award XP, update vocabulary
-
-### Vocabulary
-- `GET /api/users/:userId/vocabulary` - Get user's vocabulary list
-
-### Progress & Gamification
-- `GET /api/users/:userId` - Get user profile with XP/level/streak
-- `POST /api/users/:userId/streak` - Update user streak
-- `GET /api/badges` - List all badges
-- `GET /api/users/:userId/badges` - Get user's earned badges
-
-### Leaderboard
-- `GET /api/leaderboard?limit=100` - Get top users by XP
-
-### Contributions
-- `GET /api/contributions?status=pending` - List contributions
-- `POST /api/contributions` - Submit new contribution
-- `PATCH /api/contributions/:id` - Approve/reject contribution
-
-## Design System
-
-### Colors (Light Mode)
-- **Primary**: Blue (210° 85% 45%) - Learning, trust
-- **Success**: Green (142° 76% 36%) - Correct answers, achievements
-- **Warning**: Amber (38° 92% 50%) - Fuzzy vocabulary, needs review
-- **Destructive**: Red (0° 84% 60%) - Errors, forgotten words
-
-### Memory Strength Color Coding
-- **Known**: Green border + green/5 background
-- **Fuzzy**: Amber border + amber/5 background
-- **Forgotten**: Red border + red/5 background
-
-### Components
-- Uses shadcn/ui component library with Radix UI primitives
-- Custom gamification components: XPBar, StreakCounter, BadgeDisplay
-- Lesson player with full-screen immersive mode
-- Vocabulary cards with collapsible example phrases
-- Leaderboard items with rank badges (gold/silver/bronze for top 3)
-
-## Recent Changes (Current Session)
-1. Implemented complete schema with Drizzle ORM for Supabase
-2. Built all frontend components with exceptional visual quality
-3. Created comprehensive API routes for all features
-4. Set up database storage layer with TypeScript interfaces
-5. Designed gamification algorithms (XP calculation, memory strength scoring)
-6. **Authentication System**: Implemented bcrypt password hashing with registration/login endpoints
-7. **API Integration Layer**: Created React Query hooks in `client/src/lib/api.ts` for all endpoints
-8. **User Context**: Added `UserProvider` for client-side user state management
-9. **Database Seeding**: Created `/api/seed` endpoint for initial data population
-10. **🎨 Boot.dev Dark Mode**: Transformed UI to Boot.dev-inspired aesthetics:
-    - Neon green (142 76% 60%) for XP/success/achievements
-    - Electric purple (262 83% 58%) for badges/secondary actions
-    - Bright cyan (199 89% 48%) for interactive elements
-    - Deep midnight backgrounds (222 47% 11%)
-    - Vibrant vocabulary strength indicators (neon green/amber/red)
-    - Dark mode set as default theme
-11. **🎮 RPG Dashboard Transformation**:
-    - Fixed XP progress calculation bug (currentLevelProgress = user.xp - user.level * 100)
-    - Added grid background pattern to hero section for quest-map aesthetic
-    - Changed progress bar from gold to green/blue energy theme with glow effects
-    - Enhanced stats cards with faction colors (Level=blue, XP=gold, Streak=red, Badges=green)
-    - Quest-themed action cards with hover animations (icon scale, arrow movement)
-    - Lesson cards: difficulty badges with icons (Zap/Sword), completion badges in top-right
-    - Track cards: Map/Trophy icons, quest progress labels, gradient progress bars
-    - Full mobile responsiveness with flex-wrap and responsive grids
-    - E2E tested: authentication, dashboard display, navigation, hover interactions ✅
-12. **🔐 Production-Ready Authentication** (Latest):
-    - Removed Replit Auth, integrated direct Google OAuth and Facebook OAuth via Passport.js
-    - Implemented passport-google-oauth20 and passport-facebook strategies
-    - PostgreSQL session store (connect-pg-simple) for production persistence
-    - Added OAuth fields to users table (googleId, facebookId, firstName, lastName, profileImageUrl)
-    - Session normalization middleware sets `req.session.userId` for both OAuth and password users
-    - Fixed OAuth callback handlers to explicitly set req.session.userId before redirecting
-    - Updated storage.ts upsertUser to prioritize OAuth provider lookups (googleId/facebookId) before email fallback
-    - Updated User type to support Google OAuth, Facebook OAuth, and traditional authentication
-    - Fixed AppHeader to handle OAuth users without username (displays firstName+lastName or email)
-    - Frontend login/register pages with separate Google and Facebook login buttons
-    - End-to-end tested: password registration, email/password login, protected routes, session persistence ✅
+LingoQuest is a community-driven, gamified language learning platform designed for interactive language learning. It features an XP system, achievement badges, streaks, and leaderboards, and allows users to contribute their own content. The platform tracks vocabulary with a memory-strength scoring system and includes admin moderation workflows. It is built using a zero-cost tech stack, primarily leveraging Supabase's free tier.
 
 ## User Preferences
 - **Boot.dev-inspired dark mode aesthetics** - neon green XP, electric purple badges, deep midnight backgrounds
@@ -182,82 +10,43 @@ LingoQuest is a community-driven, gamified language learning platform where user
 - Community-first approach - users can contribute without coding
 - Free tier compatible - zero startup costs for modest usage
 
-## Getting Started
+## System Architecture
+LingoQuest employs a full-stack architecture with a React + TypeScript frontend, an Express.js backend, and a PostgreSQL database managed by Supabase.
 
-### Initial Setup
-1. Application auto-starts with `npm run dev` on port 5000
-2. Database schema is already migrated and ready
-3. **Seed initial data**: 
-   ```bash
-   curl -X POST http://localhost:5000/api/seed
-   ```
-4. **Create a user account**:
-   ```bash
-   curl -X POST http://localhost:5000/api/auth/register \
-     -H "Content-Type: application/json" \
-     -d '{"username":"demo","email":"demo@example.com","password":"password123"}'
-   ```
-5. Navigate to the app and start learning!
+**UI/UX Decisions:**
+- **Design System:** Primarily uses `shadcn/ui` with Radix UI primitives.
+- **Color Palettes:**
+    - **Boot.dev Dark Mode:** Neon green for XP/success, electric purple for badges/secondary actions, bright cyan for interactive elements, and deep midnight backgrounds.
+    - **Hausa Cultural Design:** Desert-night color palette with burnt orange (primary), emerald (success), gold (royal status), and deep indigo (background).
+- **Gamification Components:** Custom components like `CalabashXPBar`, `IncenseStreakCounter`, `KolaNutProgress`, `LeatherCard`, `HennaDivider`, and `CowrieReward` integrated with cultural animations.
+- **Bilingual Support:** Hausa/English labels and Hausa/Ajami fonts (Amiri and Scheherazade New).
 
-### Current Implementation Status
-**✅ Production-Ready MVP:**
-- ✅ Database schema with all tables migrated including sessions table
-- ✅ **Triple Authentication System** (Production-Ready):
-  - **Google OAuth**: passport-google-oauth20 with direct integration
-  - **Facebook OAuth**: passport-facebook with direct integration
-  - **Password Auth**: Traditional email/password with bcrypt hashing (SALT_ROUNDS=10)
-  - **PostgreSQL Session Store**: connect-pg-simple for production persistence (7-day TTL)
-  - **Session Normalization**: All auth methods use `req.session.userId`
-  - Secure cookies (httpOnly, sameSite: lax, secure in production)
-  - Session regeneration on login/register (prevents fixation)
-  - Authorization middleware (requireAuth, requireAdmin, requireSelfOrAdmin)
-- ✅ Beautiful, polished frontend with Boot.dev-inspired dark mode
-- ✅ Gamification system (XP, levels, streaks, badges) fully functional
-- ✅ Vocabulary tracking with memory strength indicators
-- ✅ Community contribution and admin moderation workflows
-- ✅ Complete frontend-backend integration:
-  - Authentication flow (OAuth + password register/login/logout)
-  - Lesson completion with XP rewards
-  - Vocabulary tracking from completed lessons
-  - Leaderboard with live user rankings
-  - Contribution submission and admin review
-- ✅ End-to-end testing validated entire user journey (password auth, session persistence)
-- ✅ Comprehensive deployment documentation (DEPLOYMENT.md)
+**Technical Implementations:**
+- **Frontend:** React + TypeScript, Wouter for routing, TailwindCSS for styling. State management handled by TanStack Query v5.
+- **Backend:** Express.js with Drizzle ORM for database interactions.
+- **Database:** PostgreSQL on Supabase, with Drizzle ORM for schema definition and migrations.
+- **Authentication:** Production-ready triple authentication system including direct Google OAuth, Facebook OAuth via Passport.js, and traditional email/password with bcrypt hashing. PostgreSQL session store (`connect-pg-simple`) ensures production persistence.
+- **Gamification System:** XP and leveling, daily streaks, achievement badges, and global leaderboards.
+- **Learning Experience:** Skill tree progression, multiple question types (multiple choice, fill-in-the-blank, flashcards), and an interactive full-screen lesson player with optional audio support.
+- **Vocabulary Tracking:** Personal vocabulary book with a "memory strength" system (Known, Fuzzy, Forgotten) and smart review functionality.
+- **Community Contributions:** Users can submit lessons and track proposals, which are managed via an admin dashboard for review and approval.
 
-**📋 Pre-Deployment Checklist:**
+**Feature Specifications:**
+- **Gamification:** XP & Levels (100 XP per level), Streaks (daily tracking), Badges (milestone achievements), Leaderboards (global rankings).
+- **Learning Content:** Lessons contain JSON question data.
+- **Vocabulary:** User-specific vocabulary with memory tracking.
+- **Progress:** Tracks user lesson completion.
 
-1. **Session Secret (REQUIRED):**
-   - ⚠️ **Action Required**: Set `SESSION_SECRET` environment variable
-   - Generate with: `openssl rand -base64 32`
-   - Add to Replit Secrets before publishing
-   - Risk if skipped: Session hijacking vulnerability
+**System Design Choices:**
+- **Zero-Cost Tech Stack:** Optimized for cost-effectiveness using Supabase free tier.
+- **Modular Project Structure:** Separated client, server, database, and shared schema.
+- **API Endpoints:** Comprehensive RESTful API for authentication, track/lesson management, vocabulary, progress, gamification, and contributions.
 
-2. **Database Seeding:**
-   - Run: `curl -X POST https://your-app.replit.app/api/seed`
-   - Creates initial tracks, lessons, and badges
-
-3. **Deployment Guide:**
-   - Follow step-by-step instructions in `DEPLOYMENT.md`
-   - Recommended: Autoscale Deployments (0.5 vCPU, 1 GB RAM)
-   - Estimated cost: $5-15/month for 100-500 daily active users
-
-**✅ Production-Ready Components:**
-- PostgreSQL session storage (no crashes, multi-instance support)
-- Bcrypt password hashing with secure session management
-- Google OAuth and Facebook OAuth via Passport.js
-- HTTPS enforcement in production (automatic via Replit)
-- Authorization and authentication middleware
-- Database schema optimized for all three auth methods
-
-## Known Limitations
-- Admin features require manual user role assignment in database (`isAdmin` column in `users` table)
-- Audio files stored as URLs (not uploaded to Supabase Storage yet)
-- Language-specific leaderboards not yet implemented (only global leaderboard active)
-
-## Next Steps (Post-MVP)
-- Implement Supabase Auth for Google OAuth and email/password
-- Add spaced repetition algorithm for vocabulary reviews
-- Audio upload to Supabase Storage
-- Mobile-responsive optimizations
-- User profiles with contribution history
-- Social features (friend challenges, shared vocabulary lists)
+## External Dependencies
+- **Supabase PostgreSQL:** Core database for all application data.
+- **Passport.js:** Used for Google OAuth and Facebook OAuth strategies.
+- **connect-pg-simple:** PostgreSQL-backed session storage for Express.js.
+- **bcrypt:** For secure password hashing.
+- **Google Fonts:** Amiri and Scheherazade New for cultural typography.
+- **shadcn/ui:** UI component library built on Radix UI.
+- **TanStack Query v5:** For data fetching, caching, and state management in the frontend.

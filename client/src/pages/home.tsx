@@ -1,13 +1,11 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { XPBar } from "@/components/xp-bar";
-import { StreakCounter } from "@/components/streak-counter";
 import { BadgeDisplay } from "@/components/badge-display";
-import { ArrowRight, BookOpen, Trophy, Users, Flame, Zap, Target, Award, Map, Sparkles } from "lucide-react";
+import { ArrowRight, BookOpen, Trophy, Flame, Zap, Target, Award, Map, Sparkles, Droplet } from "lucide-react";
 import { Link } from "wouter";
 import { useCurrentUser } from "@/lib/user-context";
 import { useQuery } from "@tanstack/react-query";
+import { LeatherCard, KolaNutProgress, HennaDivider } from "@/components/hausa-gamification";
 
 interface Badge {
   id: number;
@@ -48,92 +46,96 @@ export default function Home() {
     };
   });
 
-  // Calculate XP progress correctly
-  const currentLevelProgress = user.xp - (user.level * 100);
+  // Calculate XP progress correctly using modulo
+  const currentLevelProgress = user.xp % 100;
   const xpNeededForNextLevel = 100;
   const xpProgress = (currentLevelProgress / xpNeededForNextLevel) * 100;
 
+  const userName = user.firstName || user.username || "Almajiri";
+
   return (
     <div className="space-y-8">
-      {/* Hero Section - RPG Style */}
-      <div className="relative overflow-hidden rounded-lg border bg-gradient-to-br from-primary/10 via-background to-background p-4 sm:p-6">
-        <div className="absolute inset-0 opacity-20">
+      {/* Hero Section - Hausa Cultural Welcome */}
+      <LeatherCard embossed className="relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0" style={{
-            backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 19px, hsl(var(--primary) / 0.1) 19px, hsl(var(--primary) / 0.1) 20px), repeating-linear-gradient(90deg, transparent, transparent 19px, hsl(var(--primary) / 0.1) 19px, hsl(var(--primary) / 0.1) 20px)',
+            backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 19px, hsl(var(--henna)) 19px, hsl(var(--henna)) 20px), repeating-linear-gradient(90deg, transparent, transparent 19px, hsl(var(--henna)) 19px, hsl(var(--henna)) 20px)',
           }}></div>
         </div>
         <div className="relative z-10 space-y-4">
           <div className="flex flex-wrap items-center gap-3">
-            <div className="flex h-14 w-14 sm:h-16 sm:w-16 shrink-0 items-center justify-center rounded-full bg-primary/20 border-2 border-primary/40 shadow-lg shadow-primary/20">
+            <div className="flex h-14 w-14 sm:h-16 sm:w-16 shrink-0 items-center justify-center rounded-full bg-primary/20 border-2 border-primary shadow-lg shadow-primary/20">
               <Sparkles className="h-7 w-7 sm:h-8 sm:w-8 text-primary" />
             </div>
             <div className="flex-1 min-w-0">
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight">Welcome back, {user.username}!</h1>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight">
+                Sannu da zuwa, {userName}!
+              </h1>
               <p className="text-base sm:text-lg text-muted-foreground">
-                Ready for your next quest?
+                Shirya don koyo? <span className="text-primary">Ready for your next quest?</span>
               </p>
             </div>
           </div>
         </div>
-      </div>
+      </LeatherCard>
 
-      {/* Stats Dashboard - Gaming Style */}
+      {/* Stats Dashboard - Hausa Cultural Style */}
       <div className="grid gap-4 md:grid-cols-4">
-        {/* Level Card */}
-        <Card className="relative overflow-hidden border-2 border-primary/20">
+        {/* Level Card - Malam Status */}
+        <Card className="relative overflow-hidden border-2 border-primary/30 bg-gradient-to-br from-primary/5 to-transparent">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/20 text-primary">
                 <Target className="h-6 w-6" />
               </div>
               <div className="flex-1">
-                <p className="text-xs font-medium text-muted-foreground">LEVEL</p>
+                <p className="text-xs font-medium text-muted-foreground">MALAM (LEVEL)</p>
                 <p className="text-2xl font-bold text-primary">{user.level}</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* XP Card */}
-        <Card className="relative overflow-hidden border-2 border-warning/20">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-warning/20 text-warning">
-                <Zap className="h-6 w-6" />
-              </div>
-              <div className="flex-1">
-                <p className="text-xs font-medium text-muted-foreground">TOTAL XP</p>
-                <p className="text-2xl font-bold text-warning">{user.xp}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Streak Card */}
-        <Card className="relative overflow-hidden border-2 border-destructive/20">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-destructive/20 text-destructive">
-                <Flame className="h-6 w-6" />
-              </div>
-              <div className="flex-1">
-                <p className="text-xs font-medium text-muted-foreground">STREAK</p>
-                <p className="text-2xl font-bold text-destructive">{user.streak} days</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Badges Card */}
-        <Card className="relative overflow-hidden border-2 border-success/20">
+        {/* XP Card - Calabash Count */}
+        <Card className="relative overflow-hidden border-2 border-success/30 bg-gradient-to-br from-success/5 to-transparent">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-success/20 text-success">
+                <Droplet className="h-6 w-6" />
+              </div>
+              <div className="flex-1">
+                <p className="text-xs font-medium text-muted-foreground">KWALABAR (XP)</p>
+                <p className="text-2xl font-bold text-success">{user.xp}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Streak Card - Incense Burner */}
+        <Card className="relative overflow-hidden border-2 border-primary/30 bg-gradient-to-br from-primary/5 to-transparent">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/20 text-primary">
+                <Flame className="h-6 w-6" />
+              </div>
+              <div className="flex-1">
+                <p className="text-xs font-medium text-muted-foreground">RANAKU (STREAK)</p>
+                <p className="text-2xl font-bold text-primary">{user.streak}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Badges Card - Achievements */}
+        <Card className="relative overflow-hidden border-2 border-warning/30 bg-gradient-to-br from-warning/5 to-transparent">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-warning/20 text-warning">
                 <Award className="h-6 w-6" />
               </div>
               <div className="flex-1">
-                <p className="text-xs font-medium text-muted-foreground">BADGES</p>
-                <p className="text-2xl font-bold text-success">
+                <p className="text-xs font-medium text-muted-foreground">LAMBOBI (BADGES)</p>
+                <p className="text-2xl font-bold text-warning">
                   {badgesWithEarnedStatus.filter(b => b.earned).length}/{badgesWithEarnedStatus.length}
                 </p>
               </div>
@@ -142,126 +144,124 @@ export default function Home() {
         </Card>
       </div>
 
-      {/* XP Progress Bar - Energy Blue/Green */}
-      <Card className="border-2 border-success/20 bg-gradient-to-r from-success/5 to-primary/5">
-        <CardContent className="p-6 space-y-3">
-          <div className="flex items-center justify-between">
+      {/* Calabash Progress - Filling with Nono */}
+      <LeatherCard className="border-2 border-success/30">
+        <div className="space-y-4">
+          <div className="flex items-center justify-between flex-wrap gap-3">
             <div>
-              <p className="text-sm font-medium text-muted-foreground">Progress to Level {user.level + 1}</p>
-              <p className="text-2xl font-bold">
+              <p className="text-sm font-medium text-muted-foreground">Tafiya zuwa Malam Level {user.level + 1}</p>
+              <p className="text-xl sm:text-2xl font-bold">
                 <span className="text-success">{currentLevelProgress}</span>
-                <span className="text-muted-foreground"> / {xpNeededForNextLevel} XP</span>
+                <span className="text-muted-foreground"> / {xpNeededForNextLevel}</span>
+                <span className="text-sm text-muted-foreground ml-2">calabashes</span>
               </p>
             </div>
             <Badge variant="outline" className="bg-success/10 text-success border-success/20 text-lg px-3 py-1">
               {Math.round(xpProgress)}%
             </Badge>
           </div>
-          <div className="relative h-4 w-full overflow-hidden rounded-full bg-secondary border border-success/20">
-            <div
-              className="h-full bg-gradient-to-r from-success/80 via-primary to-success/80 transition-all duration-500 ease-out shadow-[0_0_10px_rgba(var(--success),0.5)]"
-              style={{ width: `${Math.max(0, Math.min(100, xpProgress))}%` }}
-            />
-          </div>
-        </CardContent>
-      </Card>
+          <HennaDivider />
+          <KolaNutProgress progress={currentLevelProgress} total={xpNeededForNextLevel} />
+        </div>
+      </LeatherCard>
 
-      {/* Quick Actions - Quest Cards */}
-      <div className="space-y-3">
-        <h2 className="text-xl font-semibold flex items-center gap-2">
+      {/* Quick Actions - Hausa Quest Cards */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-2">
           <Map className="h-5 w-5 text-primary" />
-          Available Quests
-        </h2>
+          <h2 className="text-xl font-semibold">Ayyukan Koyo</h2>
+          <span className="text-sm text-muted-foreground">(Available Quests)</span>
+        </div>
         <div className="grid gap-4 md:grid-cols-3">
           <Link href="/learn">
-            <Card className="group cursor-pointer transition-all hover-elevate active-elevate-2 border-2 border-primary/20 hover:border-primary/40" data-testid="card-quick-learn">
-              <CardHeader className="pb-3">
+            <LeatherCard embossed className="group cursor-pointer transition-all hover-elevate active-elevate-2 hover:shadow-xl" data-testid="card-quick-learn">
+              <div className="space-y-4">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3 flex-1">
                     <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 text-primary group-hover:scale-110 transition-transform">
                       <BookOpen className="h-7 w-7" />
                     </div>
                     <div className="flex-1">
-                      <CardTitle className="text-lg">Continue Quest</CardTitle>
-                      <CardDescription>Resume your learning</CardDescription>
+                      <h3 className="text-lg font-semibold">Ci Gaba</h3>
+                      <p className="text-sm text-muted-foreground">Continue learning journey</p>
                     </div>
                   </div>
                   <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
                 </div>
-              </CardHeader>
-              <CardContent className="pt-0">
+                <HennaDivider />
                 <div className="flex items-center gap-2">
                   <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
-                    <Zap className="h-3 w-3 mr-1" />
-                    +10 XP per lesson
+                    <Droplet className="h-3 w-3 mr-1" />
+                    +10 calabashes
                   </Badge>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </LeatherCard>
           </Link>
 
           <Link href="/leaderboard">
-            <Card className="group cursor-pointer transition-all hover-elevate active-elevate-2 border-2 border-warning/20 hover:border-warning/40" data-testid="card-quick-leaderboard">
-              <CardHeader className="pb-3">
+            <LeatherCard embossed className="group cursor-pointer transition-all hover-elevate active-elevate-2 hover:shadow-xl" data-testid="card-quick-leaderboard">
+              <div className="space-y-4">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3 flex-1">
                     <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-warning/20 to-warning/10 text-warning group-hover:scale-110 transition-transform">
-                      <Trophy className="h-7 w-7" />
+                      <Trophy className="h-7 w-7 animate-golden-glow" />
                     </div>
                     <div className="flex-1">
-                      <CardTitle className="text-lg">Leaderboard</CardTitle>
-                      <CardDescription>Compete with others</CardDescription>
+                      <h3 className="text-lg font-semibold">Gwaninta</h3>
+                      <p className="text-sm text-muted-foreground">Compete with scholars</p>
                     </div>
                   </div>
                   <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-warning group-hover:translate-x-1 transition-all" />
                 </div>
-              </CardHeader>
-              <CardContent className="pt-0">
+                <HennaDivider />
                 <div className="flex items-center gap-2">
                   <Badge variant="outline" className="bg-warning/10 text-warning border-warning/20">
                     <Trophy className="h-3 w-3 mr-1" />
-                    Global Rankings
+                    Sarkin Karatu
                   </Badge>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </LeatherCard>
           </Link>
 
           <Link href="/vocabulary">
-            <Card className="group cursor-pointer transition-all hover-elevate active-elevate-2 border-2 border-success/20 hover:border-success/40" data-testid="card-quick-vocabulary">
-              <CardHeader className="pb-3">
+            <LeatherCard embossed className="group cursor-pointer transition-all hover-elevate active-elevate-2 hover:shadow-xl" data-testid="card-quick-vocabulary">
+              <div className="space-y-4">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3 flex-1">
                     <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-success/20 to-success/10 text-success group-hover:scale-110 transition-transform">
                       <BookOpen className="h-7 w-7" />
                     </div>
                     <div className="flex-1">
-                      <CardTitle className="text-lg">Review Words</CardTitle>
-                      <CardDescription>Practice vocabulary</CardDescription>
+                      <h3 className="text-lg font-semibold">Kalmomi</h3>
+                      <p className="text-sm text-muted-foreground">Review vocabulary</p>
                     </div>
                   </div>
                   <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-success group-hover:translate-x-1 transition-all" />
                 </div>
-              </CardHeader>
-              <CardContent className="pt-0">
+                <HennaDivider />
                 <div className="flex items-center gap-2">
                   <Badge variant="outline" className="bg-success/10 text-success border-success/20">
                     <Target className="h-3 w-3 mr-1" />
-                    Memory Training
+                    Tunawa
                   </Badge>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </LeatherCard>
           </Link>
         </div>
       </div>
 
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-semibold">Your Achievements</h2>
-          <span className="text-sm text-muted-foreground">
+          <div className="flex items-center gap-2">
+            <h2 className="text-2xl font-semibold">Lamar Ci Gaba</h2>
+            <span className="text-sm text-muted-foreground">(Your Achievements)</span>
+          </div>
+          <Badge variant="outline" className="bg-warning/10 text-warning border-warning/20">
             {badgesWithEarnedStatus.filter(b => b.earned).length}/{badgesWithEarnedStatus.length} earned
-          </span>
+          </Badge>
         </div>
         {badgesWithEarnedStatus.length > 0 ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -277,9 +277,12 @@ export default function Home() {
             ))}
           </div>
         ) : (
-          <Card className="p-8 text-center">
-            <p className="text-muted-foreground">No badges available yet. Complete lessons to earn achievements!</p>
-          </Card>
+          <LeatherCard>
+            <p className="text-center text-muted-foreground">
+              Babu lambar ci gaba a yanzu. Kammala darussa don samun kari!
+              <span className="block mt-2 text-sm">(No badges yet. Complete lessons to earn achievements!)</span>
+            </p>
+          </LeatherCard>
         )}
       </div>
     </div>
