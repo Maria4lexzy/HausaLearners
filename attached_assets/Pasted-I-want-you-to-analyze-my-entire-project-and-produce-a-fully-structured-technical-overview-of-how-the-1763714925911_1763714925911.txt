@@ -1,0 +1,161 @@
+I want you to analyze my entire project and produce a fully structured technical overview of how the app currently works.
+
+Please examine all project files and generate a documentation output with the following sections:
+
+1. High-level overview
+
+What the app does
+
+Architecture summary (client, server, shared, DB)
+
+Tech stack (frameworks, libraries, tools)
+
+2. Project structure explanation
+
+For each top-level directory (client, server, rest-express, db, shared, migrations, dist, etc.) explain:
+
+What this folder contains
+
+What part of the app it belongs to
+
+Why it exists
+
+How the parts communicate
+
+3. Backend analysis
+
+Framework used (Express? Hono? Custom?)
+
+How routes/controllers are structured
+
+Middlewares
+
+Auth logic
+
+Where DB connections occur
+
+How validation works
+
+Any known potential issues
+
+Please also include:
+
+A list of all API endpoints and what they do
+
+The flow of a typical request from client → server → DB → client
+
+4. Database system (drizzle + postgres)
+
+Extract and list all schema definitions
+
+Explain all tables, columns, types, and relationships
+
+Summaries of enums, relations, foreign keys
+
+Show how migrations are organized
+
+Show how drizzle.config.ts is set up
+
+Show how DB is initialized on server startup
+
+5. Frontend analysis (client folder)
+
+Framework (likely Vite + React + TypeScript)
+
+UI structure (pages, components, hooks, styles)
+
+Where global state is stored
+
+How API calls are made
+
+Build and dev commands (vite)
+
+6. Shared folder analysis
+
+List all TypeScript types/interfaces
+
+Describe what is shared between frontend + backend
+
+Note anything that can be improved
+
+7. Deployment guide (generate a full guide)
+
+Based on the project content, produce deployment steps for:
+
+✔ Local development (Node + Postgres)
+✔ Using Docker
+✔ Production deployment options:
+
+Render
+
+Railway
+
+Docker compose
+
+DigitalOcean Apps
+
+Fly.io
+
+Include:
+
+Build steps
+
+Environment variables
+
+Database migrations
+
+Start commands
+
+Port configs
+
+8. Maintenance checklist
+
+Generate a list of things to maintain over time:
+
+Updating dependencies
+
+Running DB migrations
+
+Keeping env values correct
+
+Checking logs & errors
+
+Testing endpoints
+
+Performance checks
+
+Backup strategy for PostgreSQL
+
+9. Suggestions for improvement
+
+Give me a prioritized list of improvements for:
+
+Backend code quality
+
+Frontend UX
+
+Database design
+
+Project structure
+
+Scalability
+
+Error handling
+
+Security
+
+10. BONUS: Add “Boot.dev style UI enhancements”
+
+Based on the client code, suggest improvements to turn the UI into a “gamified learning experience” like Boot.dev:
+
+Add XP, streaks, quests, progress bar
+
+Level and chapter system
+
+Reward animations
+
+Dashboard redesign
+
+Challenge/quest system structure
+
+Best place in the code to add these features
