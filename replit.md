@@ -19,6 +19,8 @@ LingoQuest employs a full-stack architecture with a React + TypeScript frontend,
     - **Boot.dev Dark Mode:** Neon green for XP/success, electric purple for badges/secondary actions, bright cyan for interactive elements, and deep midnight backgrounds.
     - **Hausa Cultural Design:** Desert-night color palette with burnt orange (primary), emerald (success), gold (royal status), and deep indigo (background).
 - **Gamification Components:** Custom components like `CalabashXPBar`, `IncenseStreakCounter`, `KolaNutProgress`, `LeatherCard`, `HennaDivider`, and `CowrieReward` integrated with cultural animations.
+- **Hausa Icon System:** Custom SVG icon library (`hausa-icons.tsx`) featuring 11 culturally-authentic icons including CalabashIcon, TalkingDrumIcon, TurbanIcon, MinaretIcon, IncenseIcon, KolaNutIcon, CowrieIcon, CamelIcon, LeatherScrollIcon, HennaIcon, and ZamaniPatternIcon - replacing generic Lucide icons throughout the application.
+- **Traditional Background Patterns:** CSS-based Hausa/Northern Nigerian patterns including Fulani diamond lattice (`.fulani-diamonds`), desert dune waves (`.desert-waves`), traditional mud-cloth patterns (`.mud-cloth`), and animated harmattan haze effect with subtle drift animation.
 - **Bilingual Support:** Hausa/English labels and Hausa/Ajami fonts (Amiri and Scheherazade New).
 
 **Technical Implementations:**

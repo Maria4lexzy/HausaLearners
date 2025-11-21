@@ -1,4 +1,4 @@
-import { Book, Trophy, BookOpen, Users, Plus, Home } from "lucide-react";
+import { Trophy, Plus } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -13,30 +13,46 @@ import {
 } from "@/components/ui/sidebar";
 import { Link, useLocation } from "wouter";
 import { ThemeToggle } from "./theme-toggle";
+import { 
+  TurbanIcon, 
+  MinaretIcon, 
+  LeatherScrollIcon,
+  CalabashIcon
+} from "./hausa-icons";
+
+// Wrapper components to match Lucide icon API
+const HausaTurban = ({ className }: { className?: string }) => <TurbanIcon className={className} size={16} />;
+const HausaMinaret = ({ className }: { className?: string }) => <MinaretIcon className={className} size={16} />;
+const HausaScroll = ({ className }: { className?: string }) => <LeatherScrollIcon className={className} size={16} />;
 
 const menuItems = [
   {
     title: "Home",
+    titleHausa: "Gida",
     url: "/",
-    icon: Home,
+    icon: HausaTurban,
   },
   {
     title: "Learn",
+    titleHausa: "Koyo",
     url: "/learn",
-    icon: Book,
+    icon: HausaMinaret,
   },
   {
     title: "Vocabulary",
+    titleHausa: "Kalmomi",
     url: "/vocabulary",
-    icon: BookOpen,
+    icon: HausaScroll,
   },
   {
     title: "Leaderboard",
+    titleHausa: "Gwaninta",
     url: "/leaderboard",
     icon: Trophy,
   },
   {
     title: "Contribute",
+    titleHausa: "Bayarwa",
     url: "/contribute",
     icon: Plus,
   },
@@ -47,17 +63,20 @@ export function AppSidebar() {
 
   return (
     <Sidebar>
-      <SidebarHeader className="border-b p-4">
+      <SidebarHeader className="border-b p-4 desert-waves">
         <div className="flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <Book className="h-4 w-4" />
+            <CalabashIcon className="h-4 w-4" size={16} />
           </div>
-          <span className="text-lg font-bold">LingoQuest</span>
+          <div className="flex flex-col">
+            <span className="text-lg font-bold">LingoQuest</span>
+            <span className="text-[10px] text-muted-foreground font-hausa">Tafiyar Koyo</span>
+          </div>
         </div>
       </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent className="mud-cloth">
         <SidebarGroup>
-          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+          <SidebarGroupLabel className="font-hausa">Tafiya (Navigation)</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems.map((item) => (
@@ -65,7 +84,10 @@ export function AppSidebar() {
                   <SidebarMenuButton asChild isActive={location === item.url}>
                     <Link href={item.url} data-testid={`link-${item.title.toLowerCase()}`}>
                       <item.icon className="h-4 w-4" />
-                      <span>{item.title}</span>
+                      <span className="flex items-center gap-2">
+                        {item.title}
+                        <span className="text-xs text-muted-foreground font-hausa">({item.titleHausa})</span>
+                      </span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
