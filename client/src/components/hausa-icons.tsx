@@ -6,10 +6,11 @@
 interface IconProps {
   className?: string;
   size?: number;
+  'aria-hidden'?: boolean;
 }
 
 // Talking Drum (Kalangu) - for achievements and celebrations
-export function TalkingDrumIcon({ className = "", size = 24 }: IconProps) {
+export function TalkingDrumIcon({ className = "", size = 24, 'aria-hidden': ariaHidden = true }: IconProps) {
   return (
     <svg
       width={size}
@@ -21,7 +22,10 @@ export function TalkingDrumIcon({ className = "", size = 24 }: IconProps) {
       strokeLinecap="round"
       strokeLinejoin="round"
       className={className}
+      aria-hidden={ariaHidden}
+      role="img"
     >
+      <title>Talking Drum (Achievement)</title>
       {/* Drum body */}
       <path d="M7 4 L17 4 L19 12 L17 20 L7 20 L5 12 Z" />
       {/* Lacing */}
@@ -36,7 +40,7 @@ export function TalkingDrumIcon({ className = "", size = 24 }: IconProps) {
 }
 
 // Calabash (Kwalabar) - for XP and rewards
-export function CalabashIcon({ className = "", size = 24 }: IconProps) {
+export function CalabashIcon({ className = "", size = 24, 'aria-hidden': ariaHidden = true }: IconProps) {
   return (
     <svg
       width={size}
@@ -48,7 +52,10 @@ export function CalabashIcon({ className = "", size = 24 }: IconProps) {
       strokeLinecap="round"
       strokeLinejoin="round"
       className={className}
+      aria-hidden={ariaHidden}
+      role="img"
     >
+      <title>Calabash (XP Reward)</title>
       {/* Calabash bowl */}
       <path d="M4 14 Q4 20 12 20 Q20 20 20 14 L20 10 Q20 8 18 8 L6 8 Q4 8 4 10 Z" />
       {/* Decorative rim */}
@@ -62,7 +69,7 @@ export function CalabashIcon({ className = "", size = 24 }: IconProps) {
 }
 
 // Turban (Rawani) - for user profile and level
-export function TurbanIcon({ className = "", size = 24 }: IconProps) {
+export function TurbanIcon({ className = "", size = 24, 'aria-hidden': ariaHidden = true }: IconProps) {
   return (
     <svg
       width={size}
@@ -74,7 +81,10 @@ export function TurbanIcon({ className = "", size = 24 }: IconProps) {
       strokeLinecap="round"
       strokeLinejoin="round"
       className={className}
+      aria-hidden={ariaHidden}
+      role="img"
     >
+      <title>Turban (Level)</title>
       {/* Turban wrap */}
       <path d="M4 12 Q4 8 8 6 Q12 5 16 6 Q20 8 20 12" />
       <path d="M4 12 Q4 10 6 9 L18 9 Q20 10 20 12" />
@@ -86,7 +96,7 @@ export function TurbanIcon({ className = "", size = 24 }: IconProps) {
 }
 
 // Mosque Minaret - for learning/tracks
-export function MinaretIcon({ className = "", size = 24 }: IconProps) {
+export function MinaretIcon({ className = "", size = 24, 'aria-hidden': ariaHidden = true }: IconProps) {
   return (
     <svg
       width={size}
@@ -98,7 +108,10 @@ export function MinaretIcon({ className = "", size = 24 }: IconProps) {
       strokeLinecap="round"
       strokeLinejoin="round"
       className={className}
+      aria-hidden={ariaHidden}
+      role="img"
     >
+      <title>Minaret (Learning)</title>
       {/* Minaret base */}
       <rect x="8" y="14" width="8" height="7" />
       {/* Middle section */}
@@ -118,7 +131,7 @@ export function MinaretIcon({ className = "", size = 24 }: IconProps) {
 }
 
 // Cowrie Shell (Wuri) - for currency/rewards
-export function CowrieIcon({ className = "", size = 24 }: IconProps) {
+export function CowrieIcon({ className = "", size = 24, 'aria-hidden': ariaHidden = true }: IconProps) {
   return (
     <svg
       width={size}
@@ -130,7 +143,10 @@ export function CowrieIcon({ className = "", size = 24 }: IconProps) {
       strokeLinecap="round"
       strokeLinejoin="round"
       className={className}
+      aria-hidden={ariaHidden}
+      role="img"
     >
+      <title>Cowrie Shell (Reward)</title>
       {/* Shell body */}
       <ellipse cx="12" cy="12" rx="6" ry="8" />
       {/* Opening/teeth */}
@@ -145,7 +161,7 @@ export function CowrieIcon({ className = "", size = 24 }: IconProps) {
 }
 
 // Henna Pattern - for decorative elements
-export function HennaIcon({ className = "", size = 24 }: IconProps) {
+export function HennaIcon({ className = "", size = 24, 'aria-hidden': ariaHidden = true }: IconProps) {
   return (
     <svg
       width={size}
@@ -157,7 +173,10 @@ export function HennaIcon({ className = "", size = 24 }: IconProps) {
       strokeLinecap="round"
       strokeLinejoin="round"
       className={className}
+      aria-hidden={ariaHidden}
+      role="img"
     >
+      <title>Henna Pattern</title>
       {/* Central flower */}
       <circle cx="12" cy="12" r="3" />
       <circle cx="12" cy="12" r="1.5" fill="currentColor" />
@@ -176,7 +195,7 @@ export function HennaIcon({ className = "", size = 24 }: IconProps) {
 }
 
 // Kola Nut (Goro) - for progress and milestones
-export function KolaNutIcon({ className = "", size = 24 }: IconProps) {
+export function KolaNutIcon({ className = "", size = 24, 'aria-hidden': ariaHidden = true }: IconProps) {
   return (
     <svg
       width={size}
@@ -188,7 +207,10 @@ export function KolaNutIcon({ className = "", size = 24 }: IconProps) {
       strokeLinecap="round"
       strokeLinejoin="round"
       className={className}
+      aria-hidden={ariaHidden}
+      role="img"
     >
+      <title>Kola Nut (Progress)</title>
       {/* Nut segments */}
       <circle cx="12" cy="12" r="7" />
       <path d="M12 5 L12 19" />
@@ -202,7 +224,7 @@ export function KolaNutIcon({ className = "", size = 24 }: IconProps) {
 }
 
 // Incense Burner (Turare) - for streaks
-export function IncenseIcon({ className = "", size = 24 }: IconProps) {
+export function IncenseIcon({ className = "", size = 24, 'aria-hidden': ariaHidden = true }: IconProps) {
   return (
     <svg
       width={size}
@@ -214,7 +236,10 @@ export function IncenseIcon({ className = "", size = 24 }: IconProps) {
       strokeLinecap="round"
       strokeLinejoin="round"
       className={className}
+      aria-hidden={ariaHidden}
+      role="img"
     >
+      <title>Incense (Streak)</title>
       {/* Smoke wisps */}
       <path d="M12 4 Q10 6 12 8" strokeWidth="1.5" opacity="0.6" />
       <path d="M10 5 Q8 7 10 9" strokeWidth="1.5" opacity="0.4" />
@@ -230,7 +255,7 @@ export function IncenseIcon({ className = "", size = 24 }: IconProps) {
 }
 
 // Camel - for journey/learning path
-export function CamelIcon({ className = "", size = 24 }: IconProps) {
+export function CamelIcon({ className = "", size = 24, 'aria-hidden': ariaHidden = true }: IconProps) {
   return (
     <svg
       width={size}
@@ -242,7 +267,10 @@ export function CamelIcon({ className = "", size = 24 }: IconProps) {
       strokeLinecap="round"
       strokeLinejoin="round"
       className={className}
+      aria-hidden={ariaHidden}
+      role="img"
     >
+      <title>Camel (Journey)</title>
       {/* Body */}
       <path d="M6 12 L18 12 Q20 12 20 14 L20 16" />
       {/* Humps */}
@@ -261,7 +289,7 @@ export function CamelIcon({ className = "", size = 24 }: IconProps) {
 }
 
 // Zamanen Zamani Pattern - traditional geometric
-export function ZamaniPatternIcon({ className = "", size = 24 }: IconProps) {
+export function ZamaniPatternIcon({ className = "", size = 24, 'aria-hidden': ariaHidden = true }: IconProps) {
   return (
     <svg
       width={size}
@@ -273,7 +301,10 @@ export function ZamaniPatternIcon({ className = "", size = 24 }: IconProps) {
       strokeLinecap="round"
       strokeLinejoin="round"
       className={className}
+      aria-hidden={ariaHidden}
+      role="img"
     >
+      <title>Traditional Pattern</title>
       {/* Diamond pattern */}
       <path d="M12 4 L16 12 L12 20 L8 12 Z" />
       <path d="M12 4 L20 12 L12 20 L4 12 Z" opacity="0.6" />
@@ -285,7 +316,7 @@ export function ZamaniPatternIcon({ className = "", size = 24 }: IconProps) {
 }
 
 // Leather Book/Scroll - for lessons/learning
-export function LeatherScrollIcon({ className = "", size = 24 }: IconProps) {
+export function LeatherScrollIcon({ className = "", size = 24, 'aria-hidden': ariaHidden = true }: IconProps) {
   return (
     <svg
       width={size}
@@ -297,7 +328,10 @@ export function LeatherScrollIcon({ className = "", size = 24 }: IconProps) {
       strokeLinecap="round"
       strokeLinejoin="round"
       className={className}
+      aria-hidden={ariaHidden}
+      role="img"
     >
+      <title>Leather Scroll (Vocabulary)</title>
       {/* Scroll */}
       <rect x="6" y="4" width="12" height="16" rx="1" />
       {/* Rolled edges */}
@@ -307,6 +341,34 @@ export function LeatherScrollIcon({ className = "", size = 24 }: IconProps) {
       <line x1="9" y1="8" x2="15" y2="8" strokeWidth="1" opacity="0.6" />
       <line x1="9" y1="12" x2="15" y2="12" strokeWidth="1" opacity="0.6" />
       <line x1="9" y1="16" x2="13" y2="16" strokeWidth="1" opacity="0.6" />
+    </svg>
+  );
+}
+
+// Desert Arrow - for navigation/direction
+export function DesertArrowIcon({ className = "", size = 24, 'aria-hidden': ariaHidden = true }: IconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden={ariaHidden}
+      role="img"
+    >
+      <title>Desert Arrow</title>
+      {/* Arrow shaft with desert texture */}
+      <line x1="5" y1="12" x2="19" y2="12" />
+      {/* Arrowhead */}
+      <path d="M12 5 L19 12 L12 19" />
+      {/* Decorative desert pattern dots */}
+      <circle cx="8" cy="12" r="0.5" fill="currentColor" opacity="0.6" />
+      <circle cx="11" cy="12" r="0.5" fill="currentColor" opacity="0.6" />
     </svg>
   );
 }

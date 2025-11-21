@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { BadgeDisplay } from "@/components/badge-display";
-import { ArrowRight, Trophy } from "lucide-react";
+import { Trophy } from "lucide-react";
 import { Link } from "wouter";
 import { useCurrentUser } from "@/lib/user-context";
 import { useQuery } from "@tanstack/react-query";
@@ -17,7 +17,8 @@ import {
   HennaIcon,
   CowrieIcon,
   ZamaniPatternIcon,
-  KolaNutIcon
+  KolaNutIcon,
+  DesertArrowIcon
 } from "@/components/hausa-icons";
 
 interface Badge {
@@ -194,7 +195,7 @@ export default function Home() {
                       <p className="text-sm text-muted-foreground">Continue learning journey</p>
                     </div>
                   </div>
-                  <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                  <DesertArrowIcon className="h-5 w-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" size={20} />
                 </div>
                 <HennaDivider />
                 <div className="flex items-center gap-2">
@@ -220,7 +221,7 @@ export default function Home() {
                       <p className="text-sm text-muted-foreground">Compete with scholars</p>
                     </div>
                   </div>
-                  <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-warning group-hover:translate-x-1 transition-all" />
+                  <DesertArrowIcon className="h-5 w-5 text-muted-foreground group-hover:text-warning group-hover:translate-x-1 transition-all" size={20} />
                 </div>
                 <HennaDivider />
                 <div className="flex items-center gap-2">
@@ -246,7 +247,7 @@ export default function Home() {
                       <p className="text-sm text-muted-foreground">Review vocabulary</p>
                     </div>
                   </div>
-                  <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-success group-hover:translate-x-1 transition-all" />
+                  <DesertArrowIcon className="h-5 w-5 text-muted-foreground group-hover:text-success group-hover:translate-x-1 transition-all" size={20} />
                 </div>
                 <HennaDivider />
                 <div className="flex items-center gap-2">
