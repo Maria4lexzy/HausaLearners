@@ -4,8 +4,9 @@ import { storage } from "./storage";
 import { registerUser, loginUser } from "./auth";
 import { seedDatabase } from "./seed-endpoint";
 import { requireAuth, requireAdmin, requireSelfOrAdmin } from "./middleware";
-import { insertLessonSchema, insertTrackSchema, insertContributionSchema } from "@shared/schema";
+import { insertLessonSchema, insertTrackSchema, insertContributionSchema, adminCreateLessonSchema, updateContributionSchema } from "@shared/schema";
 import type { Question } from "@shared/schema";
+import { z } from "zod";
 import { setupAuth } from "./replitAuth";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -361,6 +362,111 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       res.json(contribution);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Admin Lesson Creation (core lessons, not community contributions)
+  app.post("/api/admin/lessons", requireAdmin, async (req, res) => {
+    try {
+      // Validate using the admin lesson schema
+      const validated = adminCreateLessonSchema.parse(req.body);
+      
+      // Verify track exists
+      const track = await storage.getTrack(validated.trackId);
+      if (!track) {
+        return res.status(400).json({ error: "Track not found" });
+      }
+
+      // Create the lesson
+      const lesson = await storage.createLesson(validated);
+      res.json({ success: true, lesson });
+    } catch (error: any) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: error.errors[0]?.message || "Validation failed" });
+      }
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Admin Update Contribution (Edit Before Approve)
+  app.patch("/api/admin/contributions/:id", requireAdmin, async (req, res) => {
+    try {
+      // Validate the update payload
+      const validated = updateContributionSchema.parse(req.body);
+      const { data, status, reviewerComment } = validated;
+      
+      const contributionId = req.params.id;
+      const userId = req.session.userId!;
+
+      const contribution = await storage.getContribution(contributionId);
+      if (!contribution) {
+        return res.status(404).json({ error: "Contribution not found" });
+      }
+
+      // Update the contribution data (allow editing Hausa-specific fields)
+      const updatedContribution = await storage.updateContribution(contributionId, {
+        data: data || contribution.data,
+        status: status || contribution.status,
+        reviewerComment,
+        reviewedBy: userId,
+        reviewedAt: status ? new Date() : contribution.reviewedAt,
+      });
+
+      // If approved, create the lesson/track with full validation
+      if (status === "approved") {
+        if (contribution.type === "track") {
+          const trackData = updatedContribution.data as any;
+          await storage.createTrack({
+            name: trackData.name,
+            description: trackData.description,
+            language: trackData.language || "Hausa",
+            icon: trackData.icon || "Book",
+            order: 999,
+          });
+        } else if (contribution.type === "lesson" && contribution.trackId) {
+          // Validate and coerce lesson data through schema before creating
+          const rawLessonData = updatedContribution.data as any;
+          const validatedLesson = adminCreateLessonSchema.parse({
+            trackId: contribution.trackId,
+            title: rawLessonData.title,
+            description: rawLessonData.description,
+            language: rawLessonData.language || "Hausa",
+            difficulty: rawLessonData.difficulty || "Easy",
+            xpReward: rawLessonData.xpReward || 100,
+            order: 999,
+            questions: rawLessonData.questions || [],
+          });
+          await storage.createLesson(validatedLesson);
+        }
+      }
+
+      res.json({ success: true, contribution: updatedContribution });
+    } catch (error: any) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: error.errors[0]?.message || "Validation failed" });
+      }
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Audio file upload for lessons
+  app.post("/api/admin/upload-audio", requireAdmin, async (req, res) => {
+    try {
+      // For now, we support URL-based audio (Cloudinary, etc.)
+      // Direct file upload would require multer middleware
+      const { audioUrl, fileName } = req.body;
+      
+      if (!audioUrl) {
+        return res.status(400).json({ error: "Audio URL is required" });
+      }
+
+      res.json({ 
+        success: true, 
+        audioUrl,
+        message: "Audio URL registered successfully" 
+      });
     } catch (error: any) {
       res.status(500).json({ error: error.message });
     }

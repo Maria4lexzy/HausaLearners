@@ -1,10 +1,11 @@
 import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { CheckCircle2, XCircle, Eye, Edit, Loader2 } from "lucide-react";
+import { CheckCircle2, XCircle, Eye, Plus, BookPlus, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
@@ -19,6 +20,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { CreateLessonDialog } from "@/components/create-lesson-dialog";
+import { EditContributionDialog } from "@/components/edit-contribution-dialog";
 
 export default function Admin() {
   const { toast } = useToast();
@@ -97,12 +100,27 @@ export default function Admin() {
   const reviewedContributions = contributions.filter(c => c.status !== "pending");
 
   return (
-    <div className="space-y-6">
-      <div className="space-y-2">
-        <h1 className="text-4xl font-bold">Admin Dashboard</h1>
-        <p className="text-lg text-muted-foreground">
-          Review and manage community contributions
-        </p>
+    <motion.div 
+      className="space-y-6"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+    >
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="space-y-2">
+          <h1 className="text-4xl font-bold">Admin Dashboard</h1>
+          <p className="text-lg text-muted-foreground">
+            Review and manage community contributions
+          </p>
+        </div>
+        <CreateLessonDialog 
+          trigger={
+            <Button size="lg" data-testid="button-create-new-lesson">
+              <BookPlus className="mr-2 h-5 w-5" />
+              Create New Lesson
+            </Button>
+          }
+        />
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">
@@ -190,17 +208,29 @@ export default function Admin() {
                   )}
                 </div>
 
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button
-                      variant="outline"
-                      onClick={() => setSelectedContribution(contribution)}
-                      data-testid="button-review"
-                    >
-                      <Eye className="mr-2 h-4 w-4" />
-                      Review
-                    </Button>
-                  </DialogTrigger>
+                <div className="flex flex-wrap gap-2">
+                  {contribution.type === "lesson" && (
+                    <EditContributionDialog 
+                      contribution={contribution}
+                      onSuccess={() => {
+                        toast({
+                          title: "Success",
+                          description: "Contribution updated successfully",
+                        });
+                      }}
+                    />
+                  )}
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant="outline"
+                        onClick={() => setSelectedContribution(contribution)}
+                        data-testid="button-review"
+                      >
+                        <Eye className="mr-2 h-4 w-4" />
+                        Review
+                      </Button>
+                    </DialogTrigger>
                   <DialogContent className="max-w-2xl">
                     <DialogHeader>
                       <DialogTitle>Review Contribution</DialogTitle>
@@ -251,6 +281,7 @@ export default function Admin() {
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>
+                </div>
               </CardContent>
             </Card>
           ))}
@@ -310,6 +341,6 @@ export default function Admin() {
           ))}
         </TabsContent>
       </Tabs>
-    </div>
+    </motion.div>
   );
 }

@@ -136,10 +136,11 @@ export const contributions = pgTable("contributions", {
 
 // TypeScript types for JSON fields
 export interface Question {
-  type: "multiple_choice" | "fill_in_blank" | "flashcard";
+  type: "multiple_choice" | "fill_in_blank" | "flashcard" | "speak" | "match";
   question: string;
   audioUrl?: string;
   tonePattern?: string;
+  gender?: "male" | "female" | "group";
   options?: string[]; // for multiple choice
   correctAnswer: string;
   vocabulary?: {
@@ -150,6 +151,24 @@ export interface Question {
     examplePhrase?: string;
   }[];
 }
+
+// Zod schema for Question validation (used in API endpoints)
+export const questionSchema = z.object({
+  type: z.enum(["multiple_choice", "fill_in_blank", "flashcard", "speak", "match"]),
+  question: z.string().min(1, "Question is required"),
+  audioUrl: z.string().optional(),
+  tonePattern: z.string().optional(),
+  gender: z.enum(["male", "female", "group"]).optional(),
+  options: z.array(z.string()).optional(),
+  correctAnswer: z.string().min(1, "Correct answer is required"),
+  vocabulary: z.array(z.object({
+    word: z.string(),
+    translation: z.string(),
+    pronunciation: z.string().optional(),
+    tone: z.string().optional(),
+    examplePhrase: z.string().optional(),
+  })).optional(),
+});
 
 export interface TrackContribution {
   name: string;
@@ -198,6 +217,39 @@ export const insertTrackSchema = createInsertSchema(tracks).omit({
 export const insertLessonSchema = createInsertSchema(lessons).omit({
   id: true,
   createdAt: true,
+});
+
+// Admin lesson creation schema with full validation for Hausa-specific fields
+export const adminCreateLessonSchema = z.object({
+  trackId: z.string().min(1, "Track is required"),
+  title: z.string().min(1, "Title is required"),
+  description: z.string().min(1, "Description is required"),
+  language: z.string().default("Hausa"),
+  difficulty: z.string().default("Easy"),
+  xpReward: z.coerce.number().min(1).max(500).default(100),
+  order: z.coerce.number().min(0).default(0),
+  questions: z.array(questionSchema).min(1, "At least one question is required"),
+});
+
+// Schema for updating contributions (Edit Before Approve)
+export const updateContributionSchema = z.object({
+  data: z.union([
+    z.object({
+      name: z.string(),
+      description: z.string(),
+      language: z.string().optional(),
+      icon: z.string().optional(),
+    }),
+    z.object({
+      title: z.string(),
+      description: z.string(),
+      difficulty: z.string().optional(),
+      xpReward: z.coerce.number().optional(),
+      questions: z.array(questionSchema).optional(),
+    }),
+  ]).optional(),
+  status: z.enum(["pending", "approved", "rejected"]).optional(),
+  reviewerComment: z.string().optional(),
 });
 
 export const insertVocabularySchema = createInsertSchema(vocabulary).omit({
