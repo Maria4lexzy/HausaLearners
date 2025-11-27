@@ -1,7 +1,11 @@
 import { sql } from "drizzle-orm";
-import { pgTable, text, varchar, integer, timestamp, boolean, jsonb, index } from "drizzle-orm/pg-core";
+import { pgTable, text, varchar, integer, timestamp, boolean, jsonb, index, pgEnum } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
+
+// Enums for Hausa-specific features
+export const lessonTypeEnum = pgEnum("lesson_type", ["core", "community"]);
+export const lessonStatusEnum = pgEnum("lesson_status", ["pending", "approved", "rejected"]);
 
 // Session storage table (required for Replit Auth and production session persistence)
 export const sessions = pgTable(
@@ -47,7 +51,7 @@ export const tracks = pgTable("tracks", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   name: text("name").notNull(),
   description: text("description").notNull(),
-  language: text("language").notNull().default("Spanish"),
+  language: text("language").notNull().default("Hausa"),
   icon: text("icon").notNull().default("Book"),
   order: integer("order").notNull().default(0),
   isLocked: boolean("is_locked").notNull().default(false),
@@ -61,6 +65,7 @@ export const lessons = pgTable("lessons", {
   trackId: varchar("track_id").notNull().references(() => tracks.id, { onDelete: "cascade" }),
   title: text("title").notNull(),
   description: text("description").notNull(),
+  language: text("language").notNull().default("Hausa"),
   difficulty: text("difficulty").notNull().default("Easy"), // Easy, Medium, Hard
   xpReward: integer("xp_reward").notNull().default(10),
   order: integer("order").notNull().default(0),
@@ -74,6 +79,9 @@ export const vocabulary = pgTable("vocabulary", {
   userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   word: text("word").notNull(),
   translation: text("translation").notNull(),
+  pronunciation: text("pronunciation"),
+  audioUrl: text("audio_url"),
+  tone: text("tone"),
   examplePhrase: text("example_phrase"),
   memoryStrength: text("memory_strength").notNull().default("Known"), // Known, Fuzzy, Forgotten
   lastReviewedAt: timestamp("last_reviewed_at").notNull().defaultNow(),
@@ -116,7 +124,8 @@ export const contributions = pgTable("contributions", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   contributorId: varchar("contributor_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   type: text("type").notNull(), // "track" or "lesson"
-  status: text("status").notNull().default("pending"), // pending, approved, rejected
+  lessonType: lessonTypeEnum("lesson_type").default("community"),
+  status: lessonStatusEnum("status").default("pending"),
   trackId: varchar("track_id").references(() => tracks.id, { onDelete: "set null" }),
   data: jsonb("data").notNull().$type<TrackContribution | LessonContribution>(),
   reviewerComment: text("reviewer_comment"),
@@ -130,11 +139,14 @@ export interface Question {
   type: "multiple_choice" | "fill_in_blank" | "flashcard";
   question: string;
   audioUrl?: string;
+  tonePattern?: string;
   options?: string[]; // for multiple choice
   correctAnswer: string;
   vocabulary?: {
     word: string;
     translation: string;
+    pronunciation?: string;
+    tone?: string;
     examplePhrase?: string;
   }[];
 }
@@ -210,6 +222,7 @@ export const insertUserBadgeSchema = createInsertSchema(userBadges).omit({
 
 export const insertContributionSchema = createInsertSchema(contributions).omit({
   id: true,
+  lessonType: true,
   status: true,
   reviewerComment: true,
   reviewedBy: true,
