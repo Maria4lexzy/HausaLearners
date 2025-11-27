@@ -8,6 +8,7 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { AppHeader } from "@/components/app-header";
 import { ThemeProvider } from "@/components/theme-provider";
 import { UserProvider } from "@/lib/user-context";
+import { ErrorBoundary } from "@/components/error-boundary";
 import Home from "@/pages/home";
 import Learn from "@/pages/learn";
 import Vocabulary from "@/pages/vocabulary";
@@ -16,6 +17,7 @@ import Contribute from "@/pages/contribute";
 import Admin from "@/pages/admin";
 import Login from "@/pages/auth/login";
 import Register from "@/pages/auth/register";
+import Error from "@/pages/error";
 import NotFound from "@/pages/not-found";
 import { useCurrentUser } from "@/lib/user-context";
 import { Redirect } from "wouter";
@@ -57,23 +59,38 @@ function Router() {
       <Route path="/auth/register">
         <AuthRoute component={Register} />
       </Route>
+      <Route path="/error">
+        <Error />
+      </Route>
       <Route path="/">
-        <ProtectedRoute component={Home} />
+        <ErrorBoundary>
+          <ProtectedRoute component={Home} />
+        </ErrorBoundary>
       </Route>
       <Route path="/learn">
-        <ProtectedRoute component={Learn} />
+        <ErrorBoundary>
+          <ProtectedRoute component={Learn} />
+        </ErrorBoundary>
       </Route>
       <Route path="/vocabulary">
-        <ProtectedRoute component={Vocabulary} />
+        <ErrorBoundary>
+          <ProtectedRoute component={Vocabulary} />
+        </ErrorBoundary>
       </Route>
       <Route path="/leaderboard">
-        <ProtectedRoute component={Leaderboard} />
+        <ErrorBoundary>
+          <ProtectedRoute component={Leaderboard} />
+        </ErrorBoundary>
       </Route>
       <Route path="/contribute">
-        <ProtectedRoute component={Contribute} />
+        <ErrorBoundary>
+          <ProtectedRoute component={Contribute} />
+        </ErrorBoundary>
       </Route>
       <Route path="/admin">
-        <ProtectedRoute component={Admin} />
+        <ErrorBoundary>
+          <ProtectedRoute component={Admin} />
+        </ErrorBoundary>
       </Route>
       <Route component={NotFound} />
     </Switch>

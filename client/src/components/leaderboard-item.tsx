@@ -38,7 +38,7 @@ export function LeaderboardItem({ rank, username, xp, isCurrentUser }: Leaderboa
 
       <Avatar className="h-10 w-10">
         <AvatarFallback className="bg-primary/10 text-primary">
-          {username.slice(0, 2).toUpperCase()}
+          {username ? username.slice(0, 2).toUpperCase() : "??"}
         </AvatarFallback>
       </Avatar>
 
