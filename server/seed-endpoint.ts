@@ -1,5 +1,5 @@
 import { storage } from "./storage";
-import type { Question } from "@shared/schema";
+import { HAUSA_CURRICULUM } from "./seed-data";
 
 export async function seedDatabase() {
   try {
@@ -12,97 +12,64 @@ export async function seedDatabase() {
       return { message: "Database already contains data" };
     }
 
-    // Seed Tracks
-    const basicsTrack = await storage.createTrack({
-      name: "Basics",
-      description: "Learn essential words and phrases",
-      language: "Spanish",
-      icon: "Book",
-      order: 1,
-      isLocked: false,
-      unlockLevel: 1,
-    });
+    const results = { tracksCreated: 0, lessonsCreated: 0, badgesCreated: 0 };
 
-    const travelTrack = await storage.createTrack({
-      name: "Travel",
-      description: "Phrases for getting around",
-      language: "Spanish",
-      icon: "Plane",
-      order: 2,
-      isLocked: false,
-      unlockLevel: 3,
-    });
+    // Seed Hausa curriculum
+    for (const moduleData of HAUSA_CURRICULUM) {
+      // Create track
+      const track = await storage.createTrack({
+        name: moduleData.name,
+        description: moduleData.description,
+        language: moduleData.language,
+        icon: moduleData.icon,
+        order: moduleData.order,
+        isLocked: false,
+        unlockLevel: 1,
+      });
 
-    const foodTrack = await storage.createTrack({
-      name: "Food & Dining",
-      description: "Order food and discuss meals",
-      language: "Spanish",
-      icon: "UtensilsCrossed",
-      order: 3,
-      isLocked: true,
-      unlockLevel: 5,
-    });
+      results.tracksCreated++;
+      console.log(`Created track: ${moduleData.name}`);
 
-    console.log("Created tracks");
+      // Create lessons for this track
+      for (let lessonIdx = 0; lessonIdx < moduleData.lessons.length; lessonIdx++) {
+        const lessonData = moduleData.lessons[lessonIdx];
+        await storage.createLesson({
+          trackId: track.id,
+          title: lessonData.title,
+          description: lessonData.description,
+          language: moduleData.language,
+          difficulty: lessonData.difficulty,
+          xpReward: lessonData.xpReward,
+          order: lessonIdx,
+          questions: lessonData.questions,
+        });
 
-    // Seed Lessons
-    const greetingsQuestions: Question[] = [
-      {
-        type: "multiple_choice",
-        question: "How do you say 'Hello' in Spanish?",
-        options: ["Hola", "Adiós", "Gracias", "Por favor"],
-        correctAnswer: "Hola",
-        vocabulary: [{ word: "Hola", translation: "Hello" }],
-      },
-      {
-        type: "fill_in_blank",
-        question: "Complete: '_____ días' (Good day)",
-        correctAnswer: "Buenos",
-        vocabulary: [
-          {
-            word: "Buenos días",
-            translation: "Good day",
-            examplePhrase: "Buenos días, ¿cómo estás?",
-          },
-        ],
-      },
-    ];
-
-    await storage.createLesson({
-      trackId: basicsTrack.id,
-      title: "Greetings",
-      description: "Learn how to say hello and goodbye",
-      difficulty: "Easy",
-      xpReward: 10,
-      order: 1,
-      questions: greetingsQuestions,
-    });
-
-    await storage.createLesson({
-      trackId: basicsTrack.id,
-      title: "Numbers 1-10",
-      description: "Count from one to ten",
-      difficulty: "Easy",
-      xpReward: 10,
-      order: 2,
-      questions: [
-        {
-          type: "flashcard",
-          question: "What is 'Uno' in English?",
-          correctAnswer: "One",
-          vocabulary: [{ word: "Uno", translation: "One" }],
-        },
-      ],
-    });
+        results.lessonsCreated++;
+      }
+    }
 
     console.log("Created lessons");
 
     // Seed Badges
     await storage.createBadge({
-      name: "First Step",
-      description: "Complete your first lesson",
-      icon: "Star",
-      criteria: "complete_first_lesson",
+      name: "Sound Starter",
+      description: "Complete Alphabet & Pronunciation",
+      icon: "MiaretIcon",
+      criteria: "complete_module_1",
+    });
+
+    await storage.createBadge({
+      name: "Greeter",
+      description: "Master greetings and introductions",
+      icon: "HandWave",
+      criteria: "complete_module_2",
+    });
+
+    await storage.createBadge({
+      name: "Counter",
+      description: "Learn numbers and time",
+      icon: "Clock",
+      criteria: "complete_module_3",
     });
 
     await storage.createBadge({
@@ -112,9 +79,13 @@ export async function seedDatabase() {
       criteria: "7_day_streak",
     });
 
+    results.badgesCreated = 4;
     console.log("Created badges");
 
-    return { message: "Database seeded successfully" };
+    return {
+      message: "Database seeded successfully with Hausa curriculum",
+      ...results,
+    };
   } catch (error: any) {
     console.error("Seed error:", error);
     throw error;

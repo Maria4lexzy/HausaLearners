@@ -1,0 +1,91 @@
+Module,Lessons (4-6 per Module),Key Topics & Objectives (From Your Content + Supplements),Exercises & Gamification
+1. Alphabet & Pronunciation,"1. Boko Script Basics
+2. Special Letters (ɗ, ƙ, ɓ)
+3. Tones & Pitch
+4. Common Sounds Practice
+5. Quiz: Pronounce Words","- Latin-based alphabet with hooks (ɗ=implosive d).
+- Tones: High/low (e.g., high pitch in informal greetings like ""Mariam?"").
+- Objective: Read/write simple words; pronounce with tones.","- Match: Letter to sound (e.g., ɗ/audio).
+- Speak: Record ""Ina kwana"" (feedback on pitch).
+- XP: 100/lesson; Badge: ""Sound Starter"". Boss: Spell/pronounce 10 words."
+2. Greetings & Introductions,"1. Informal Greetings
+2. Formal & Group Greetings
+3. Responses & Endings
+4. Situational Greetings (Birth/Sick/Death/Travel/Market)
+5. Politeness Phrases
+6. Dialogue Practice","- Informal: ""Mariam?"" (high pitch), ""Ina kwana/yini"" (good morning/afternoon).
+- Formal: ""Sannu/Sannuku"" + actions (e.g., ""Sannu da aiki"").
+- Responses: ""Lafiya kalau"", ""Alhamdulillah"".
+- Situational: Birth (""Ta sauka lafiya?""), Sick (""Ya jiki?""), Death (""Allah ya ji kan shi""), Travel (""Sannu da zuwa"").
+- Endings: ""Allah ya taimaka"", ""Sai anjima"".
+- Objective: Handle basic encounters politely.","- Multiple-choice: ""How are you (male)? Yaya kake/kike"".
+- Fill-blank: ""____ da zuwa (Welcome)"".
+- Speak: Greet formally.
+- XP: 150; Streak Bonus: Daily greeting quest. Boss: Role-play meeting. Community: Upload regional variants."
+3. Numbers & Time,"1. Numbers 1-100
+2. Telling Time
+3. Days of the Week
+4. Asking Questions (Numbers/Time)
+5. Practice Dialogues","- Numbers: Guda daya (1), dubu (1000).
+- Time: ""Ina lokaci?"" (What time?).
+- Days: (Supplement: Litinin/Monday, Talata/Tuesday, etc.).
+- Objective: Count, tell time, schedule basics.","- Match: Number to word.
+- Fill-blank: ""Guda ____ (3)"".
+- XP: 120; Badge: ""Counter"". Boss: Time-telling quiz."
+4. Family & Colors,"1. Family Members
+2. Colors Vocabulary
+3. Descriptions with Colors
+4. Possessives in Family
+5. Quiz: Describe Family","- Family: Baba (father), Mama (mother), Yaya (sibling), from your plurals (babuna/mamuna).
+- Colors: Fari (white), Baki (black), Ja (red), Kore (green).
+- Objective: Describe people/family with colors/gender.","- Multiple-choice: ""White: Fari/Baki"".
+- Fill-blank: ""Baba na (My father)"".
+- XP: 130; Community: Upload family trees."
+5. Basic Nouns & Gender,"1. House Parts
+2. Body Parts
+3. Clothing & Items
+4. Gender Rules (ki/ka)
+5. Plurals Basics","- House: Gida (house), Kofa (door), plurals (kofofi).
+- Body: Kai (head), Ido (eye), plurals (jikuna).
+- Clothing: Riga (dress), Wando (trousers), plurals (riguna/wanduna).
+- Gender: Ki (female you), Ka (male you).
+- Objective: Identify/use nouns with gender/plurals.","- Match: Singular/plural (kujera/kujeru).
+- Fill-blank: ""Head: ____ (kai)"".
+- XP: 140; Boss: Describe a room."
+6. Simple Pronouns & Possession,"1. Subject Pronouns
+2. Possessive Pronouns
+3. Reflexive Pronouns
+4. Demonstratives (This/That)
+5. Interrogatives (Who/What/Where)","- Subjects: Ni (I), Kai (you m.), Ke (you f.), Shi (he), Ita (she).
+- Possessives: Nawa (mine), Naka (yours m.), Naki (yours f.), Nashi (his), Nata (hers).
+- Reflexives: Kaina (myself), Kanka (yourself m.), Kanta (herself).
+- Demos: Wannan (this), Wancan (that).
+- Interrogs: Waye (who m.), Wace (who f.), Me (what), Ina (where).
+- Objective: Form simple possessive sentences.","- Fill-blank: ""____ ce Maryam (Ni)"".
+- Multiple-choice: ""Mine: Nawa/Naka"".
+- XP: 150; Badge: ""Pronoun Pro""."
+7. Daily Routines,"1. Routine Verbs
+2. Present Tense (Ina...)
+3. Basic Sentences
+4. Questions in Routines","- Verbs: Ina wankewanke (washing dishes), Ina shara (sweeping), Ina barci (sleeping).
+- Present: Ina zaune (sitting), Ina cin abinci (eating).
+- Objective: Describe daily activities.","- Speak: ""Ina wanka (I am bathing)"".
+- XP: 160; Daily Streak: Routine log."
+8. Food & Shopping Basics,"1. Food Nouns
+2. Market Greetings/Questions
+3. Bargaining Phrases
+4. Quantities & Prices","- Food: Shinkafa (rice), Nama (meat), Ruwa (water), plurals (namomi).
+- Market: ""Guda nawa?"" (how many), ""Nawane?"" (how much), ""A rege mana"" (reduce price).
+- Objective: Shop for basics.","- Dialogue: Bargain simulation.
+- XP: 170; Community: Food recipes."
+9. Directions & Places,"1. Place Nouns
+2. Asking Directions
+3. Basic Commands","- Places: Kasuwa (market), Gida (house).
+- Directions: ""Ina gidan?"" (where is the house?).
+- Objective: Navigate simple scenarios.","- Match: Place to phrase.
+- XP: 140."
+10. Weather & Seasons,"1. Weather Phrases
+2. Seasons Vocabulary
+3. Descriptions","- Weather: ""Ya sanyi"" (cold), ""Ya zafi"" (hot), ""Ya ruwan sama"" (rainy).
+- Objective: Discuss environment.","- Fill-blank: ""Ya ____ (zafi)"".
+- XP: 130; Level Boss: Full intro dialogue."

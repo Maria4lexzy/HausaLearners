@@ -44,6 +44,29 @@ LingoQuest employs a full-stack architecture with a React + TypeScript frontend,
 - **Modular Project Structure:** Separated client, server, database, and shared schema.
 - **API Endpoints:** Comprehensive RESTful API for authentication, track/lesson management, vocabulary, progress, gamification, and contributions.
 
+## Hausa Curriculum Content
+
+### 10 Comprehensive Learning Modules (44+ Lessons)
+1. **Alphabet & Pronunciation** (5 lessons) - Boko script, special letters, tones
+2. **Greetings & Introductions** (6 lessons) - Formal/informal greetings, situational responses
+3. **Numbers & Time** (5 lessons) - Counting 1-100, telling time, days of week
+4. **Family & Colors** (5 lessons) - Family terms, color vocabulary, descriptions
+5. **Basic Nouns & Gender** (5 lessons) - House parts, body parts, gender rules, plurals
+6. **Simple Pronouns & Possession** (5 lessons) - Personal pronouns, possessives, demonstratives
+7. **Daily Routines** (4 lessons) - Action verbs, present tense, routine sentences
+8. **Food & Shopping Basics** (4 lessons) - Food vocabulary, market phrases, bargaining
+9. **Directions & Places** (3 lessons) - Location names, asking directions, commands
+10. **Weather & Seasons** (3 lessons) - Weather expressions, seasonal vocabulary
+
+**Each Lesson Includes:**
+- Multiple question types: multiple choice, fill-in-blank, flashcards
+- Vocabulary with pronunciation guides
+- Optional audio URLs for pronunciation practice
+- Tone patterns for tonal accuracy
+- Cultural context and Hausa-specific linguistic features
+
+**Seed Data:** Run `POST /api/seed` to populate database with all 10 modules and 44+ lessons automatically.
+
 ## External Dependencies
 - **Supabase PostgreSQL:** Core database for all application data.
 - **Passport.js:** Used for Google OAuth and Facebook OAuth strategies.
@@ -52,3 +75,11 @@ LingoQuest employs a full-stack architecture with a React + TypeScript frontend,
 - **Google Fonts:** Amiri and Scheherazade New for cultural typography.
 - **shadcn/ui:** UI component library built on Radix UI.
 - **TanStack Query v5:** For data fetching, caching, and state management in the frontend.
+
+## Recent Updates (Session 7-8)
+- **Improved Error Handling:** Added React Error Boundaries and dedicated error page with navigation options
+- **Fixed Leaderboard Null Error:** Added null-safe checks for username fallback
+- **Comprehensive Hausa Schema:** Added `language` field to lessons/tracks, `pronunciation`, `audioUrl`, `tone` to vocabulary
+- **Hausa Icon System:** Added DesertArrowIcon for navigation, replaced all generic arrows with Hausa-themed alternatives
+- **Custom Hausa Curriculum:** 10 modules with 44+ lessons, authentic cultural content, proper tone/pronunciation data
+- **Database Seeding:** Automated curriculum population via `/api/seed` endpoint
