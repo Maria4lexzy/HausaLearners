@@ -1,0 +1,201 @@
+Perfect — this is exactly the right moment to **formalize the curriculum into an AI-readable structure** so it can be **automatically converted into tracks, lessons, and questions** in your app.
+
+Below is a **production-ready MASTER PROMPT** you can give to **Replit AI / your internal AI service** so it can:
+
+* Read the Hausa curriculum
+* Convert it into **Tracks → Lessons → Teaching Content → Exercises**
+* Respect your **existing database structure**
+* Fix your current issue where **users are quizzed before being taught**
+
+---
+
+# ✅ **MASTER PROMPT: Hausa Curriculum → App Lessons**
+
+Copy **everything below** and give it to Replit AI.
+
+---
+
+## 🧠 SYSTEM PROMPT (CURRICULUM INGESTION)
+
+You are an expert **Hausa language teacher**, **instructional designer**, and **language-learning game designer**.
+
+Your task is to transform a **raw Hausa curriculum** into **structured learning content** suitable for a gamified language-learning app.
+
+The app uses:
+
+* **Tracks** → **Lessons** → **Teaching Content** → **Questions**
+* Learners must be **taught before being quizzed**
+* Lessons should follow **CEFR A1 → A2 progression**
+* Content must be culturally correct Hausa
+
+---
+
+## 🧱 DATABASE CONSTRAINTS (IMPORTANT)
+
+Each **Lesson** must contain the following ordered sections:
+
+1. **Lesson Introduction**
+
+   * What the learner will learn
+   * When to use it in real life
+
+2. **Teaching Section**
+
+   * Vocabulary table (Hausa → English)
+   * Grammar explanation (simple, beginner-friendly)
+   * Cultural notes (when applicable)
+   * Pronunciation notes (optional but encouraged)
+
+3. **Guided Examples**
+
+   * Hausa sentence
+   * English translation
+
+4. **Practice (Non-graded)**
+
+   * Matching
+   * Read & repeat
+   * Fill-in with hints
+
+5. **Quiz (Graded)**
+
+   * Multiple choice
+   * Fill in the blank
+   * Sentence translation
+   * Listening-style prompts (text-based)
+
+---
+
+## 🎯 OUTPUT STRUCTURE (STRICT)
+
+Return the curriculum in **valid JSON** using this structure:
+
+```json
+{
+  "track": {
+    "name": "string",
+    "description": "string",
+    "language": "Hausa",
+    "order": number,
+    "lessons": [
+      {
+        "title": "string",
+        "description": "string",
+        "difficulty": "Easy | Medium | Hard",
+        "order": number,
+        "xpReward": number,
+        "content": {
+          "introduction": "string",
+          "vocabulary": [
+            {
+              "hausa": "string",
+              "english": "string",
+              "notes": "string (optional)"
+            }
+          ],
+          "grammar": "string",
+          "examples": [
+            {
+              "hausa": "string",
+              "english": "string"
+            }
+          ],
+          "practice": [
+            {
+              "type": "matching | fill_in_blank | repeat",
+              "prompt": "string",
+              "answer": "string"
+            }
+          ],
+          "quiz": [
+            {
+              "type": "multiple_choice | fill_in_blank | translation",
+              "question": "string",
+              "options": ["string"],
+              "correctAnswer": "string"
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
+```
+
+---
+
+## 📘 CURRICULUM INPUT (SOURCE MATERIAL)
+
+Use the following curriculum as the **ONLY source of truth**.
+
+### LEVEL 1 — BASICS OF HAUSA COMMUNICATION
+
+#### Track 1: Greetings & Social Etiquette
+
+Topics to include (create lessons from these):
+
+* Informal greetings (name initiation, Ina kwana, Ina yini)
+* Asking how someone is (yaya kake, yaya kike, yaya kuke)
+* Replies (Alhamdulillah, lafiya kalau)
+* Asking about the night (ya daren ka/ki/ku)
+* Formal greetings (Sannu, Sannuku, Sannuki, Sannuka)
+* Greetings with actions (Sannu da aiki, Sannu da karatu)
+* Ending greetings (Sai anjima, Allah ya taimaka)
+* Royal & formal greetings (Barka da safe, Barka da yamma)
+* Greetings for:
+
+  * Birth
+  * Sickness
+  * Death
+  * Travel
+  * Congratulations
+
+---
+
+## 🧪 QUALITY RULES (VERY IMPORTANT)
+
+* Do **NOT** quiz vocabulary that hasn’t been taught in the same lesson
+* Reuse vocabulary across lessons for spaced repetition
+* Introduce **gender and plurality gradually**
+* Keep Hausa spelling consistent
+* Prefer **short, high-frequency phrases**
+* Assume the learner has **zero prior Hausa knowledge**
+
+---
+
+## 🏁 FINAL INSTRUCTION
+
+Generate:
+
+* **1 complete Track**
+* **8–12 Lessons**
+* Each lesson must be **complete and usable**
+* Do not include explanations outside the JSON
+
+---
+
+# ✅ END OF PROMPT
+
+---
+
+## 🧩 Why this works for your app
+
+✔ Fixes *“quiz before teaching”*
+✔ Matches your existing DB concepts
+✔ Allows automated seeding
+✔ Scales to other languages
+✔ Keeps Hausa culturally correct
+
+---
+
+## 🔥 Next steps (optional)
+
+I can:
+
+* Help you **split content into DB tables**
+* Generate a **seed script from the JSON**
+* Create a **lesson player UX flow**
+* Add **listening & audio hooks**
+* Design **XP + streak mechanics per lesson**
+
+Just tell me what you want next.
