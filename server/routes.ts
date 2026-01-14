@@ -516,6 +516,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       for (const trackData of tracks) {
         try {
+          // First, validate all lessons before creating anything
+          const validatedLessons: any[] = [];
+          const trackErrors: string[] = [];
+          
+          if (trackData.lessons && Array.isArray(trackData.lessons)) {
+            for (let i = 0; i < trackData.lessons.length; i++) {
+              const lessonData = trackData.lessons[i];
+              try {
+                const questions = convertCurriculumToQuestions(lessonData.content || lessonData);
+                
+                if (questions.length === 0) {
+                  trackErrors.push(`Lesson "${lessonData.title}": No valid questions found in content`);
+                  continue;
+                }
+                
+                // Pre-validate (trackId will be filled later)
+                const lessonPayload = {
+                  trackId: "temp",
+                  title: lessonData.title,
+                  description: lessonData.description || lessonData.content?.introduction || "",
+                  language: trackData.language || "Hausa",
+                  difficulty: lessonData.difficulty || "Easy",
+                  xpReward: lessonData.xpReward || 100,
+                  order: lessonData.order || i,
+                  questions,
+                };
+                adminCreateLessonSchema.parse(lessonPayload);
+                validatedLessons.push(lessonPayload);
+              } catch (lessonError: any) {
+                const errorMsg = lessonError instanceof z.ZodError 
+                  ? lessonError.errors[0]?.message 
+                  : lessonError.message;
+                trackErrors.push(`Lesson "${lessonData.title}": ${errorMsg}`);
+              }
+            }
+          }
+          
+          // Only create track if we have at least one valid lesson
+          if (validatedLessons.length === 0) {
+            errors.push(`Track "${trackData.name}": No valid lessons to import`);
+            errors.push(...trackErrors);
+            continue;
+          }
+
           // Create the track
           const track = await storage.createTrack({
             name: trackData.name,
@@ -526,42 +570,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
           });
           tracksCreated++;
 
-          // Create lessons for this track
-          if (trackData.lessons && Array.isArray(trackData.lessons)) {
-            for (let i = 0; i < trackData.lessons.length; i++) {
-              const lessonData = trackData.lessons[i];
-              try {
-                // Convert curriculum format to app format
-                const questions = convertCurriculumToQuestions(lessonData.content || lessonData);
-                
-                // Check that we have valid questions
-                if (questions.length === 0) {
-                  errors.push(`Lesson "${lessonData.title}": No valid questions found in content`);
-                  continue;
-                }
-                
-                // Validate through schema before creating
-                const validatedLesson = adminCreateLessonSchema.parse({
-                  trackId: track.id,
-                  title: lessonData.title,
-                  description: lessonData.description || lessonData.content?.introduction || "",
-                  language: trackData.language || "Hausa",
-                  difficulty: lessonData.difficulty || "Easy",
-                  xpReward: lessonData.xpReward || 100,
-                  order: lessonData.order || i,
-                  questions,
-                });
-                
-                await storage.createLesson(validatedLesson);
-                lessonsCreated++;
-              } catch (lessonError: any) {
-                const errorMsg = lessonError instanceof z.ZodError 
-                  ? lessonError.errors[0]?.message 
-                  : lessonError.message;
-                errors.push(`Lesson "${lessonData.title}": ${errorMsg}`);
-              }
-            }
+          // Create all validated lessons
+          for (const lessonPayload of validatedLessons) {
+            lessonPayload.trackId = track.id;
+            await storage.createLesson(lessonPayload);
+            lessonsCreated++;
           }
+          
+          // Add any lesson errors for logging
+          errors.push(...trackErrors);
         } catch (trackError: any) {
           errors.push(`Track "${trackData.name}": ${trackError.message}`);
         }
