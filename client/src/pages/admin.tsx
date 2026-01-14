@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/dialog";
 import { CreateLessonDialog } from "@/components/create-lesson-dialog";
 import { EditContributionDialog } from "@/components/edit-contribution-dialog";
+import { ImportCurriculumDialog } from "@/components/import-curriculum-dialog";
 
 export default function Admin() {
   const { toast } = useToast();
@@ -113,14 +114,17 @@ export default function Admin() {
             Review and manage community contributions
           </p>
         </div>
-        <CreateLessonDialog 
-          trigger={
-            <Button size="lg" data-testid="button-create-new-lesson">
-              <BookPlus className="mr-2 h-5 w-5" />
-              Create New Lesson
-            </Button>
-          }
-        />
+        <div className="flex flex-wrap gap-2">
+          <ImportCurriculumDialog />
+          <CreateLessonDialog 
+            trigger={
+              <Button size="lg" data-testid="button-create-new-lesson">
+                <BookPlus className="mr-2 h-5 w-5" />
+                Create New Lesson
+              </Button>
+            }
+          />
+        </div>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">

@@ -497,6 +497,170 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Admin Import Curriculum - bulk import from JSON
+  app.post("/api/admin/import-curriculum", requireAdmin, async (req, res) => {
+    try {
+      const body = req.body;
+      const tracks = body.tracks || (body.track ? [body.track] : []);
+      
+      if (!tracks.length) {
+        return res.status(400).json({ 
+          success: false, 
+          errors: ["No tracks found in curriculum JSON"] 
+        });
+      }
+
+      let tracksCreated = 0;
+      let lessonsCreated = 0;
+      const errors: string[] = [];
+
+      for (const trackData of tracks) {
+        try {
+          // Create the track
+          const track = await storage.createTrack({
+            name: trackData.name,
+            description: trackData.description || "",
+            language: trackData.language || "Hausa",
+            icon: trackData.icon || "Book",
+            order: trackData.order || 0,
+          });
+          tracksCreated++;
+
+          // Create lessons for this track
+          if (trackData.lessons && Array.isArray(trackData.lessons)) {
+            for (let i = 0; i < trackData.lessons.length; i++) {
+              const lessonData = trackData.lessons[i];
+              try {
+                // Convert curriculum format to app format
+                const questions = convertCurriculumToQuestions(lessonData.content || lessonData);
+                
+                // Check that we have valid questions
+                if (questions.length === 0) {
+                  errors.push(`Lesson "${lessonData.title}": No valid questions found in content`);
+                  continue;
+                }
+                
+                // Validate through schema before creating
+                const validatedLesson = adminCreateLessonSchema.parse({
+                  trackId: track.id,
+                  title: lessonData.title,
+                  description: lessonData.description || lessonData.content?.introduction || "",
+                  language: trackData.language || "Hausa",
+                  difficulty: lessonData.difficulty || "Easy",
+                  xpReward: lessonData.xpReward || 100,
+                  order: lessonData.order || i,
+                  questions,
+                });
+                
+                await storage.createLesson(validatedLesson);
+                lessonsCreated++;
+              } catch (lessonError: any) {
+                const errorMsg = lessonError instanceof z.ZodError 
+                  ? lessonError.errors[0]?.message 
+                  : lessonError.message;
+                errors.push(`Lesson "${lessonData.title}": ${errorMsg}`);
+              }
+            }
+          }
+        } catch (trackError: any) {
+          errors.push(`Track "${trackData.name}": ${trackError.message}`);
+        }
+      }
+
+      res.json({
+        success: errors.length === 0,
+        tracksCreated,
+        lessonsCreated,
+        errors: errors.length > 0 ? errors : undefined,
+      });
+    } catch (error: any) {
+      res.status(500).json({ 
+        success: false, 
+        errors: [error.message] 
+      });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
+}
+
+// Helper function to convert curriculum content to app questions
+function convertCurriculumToQuestions(content: any): Question[] {
+  const questions: Question[] = [];
+
+  // Convert vocabulary to flashcard questions
+  if (content.vocabulary && Array.isArray(content.vocabulary)) {
+    for (const vocab of content.vocabulary) {
+      const word = vocab.hausa || vocab.word;
+      const translation = vocab.english || vocab.translation;
+      if (word && translation) {
+        questions.push({
+          type: "flashcard",
+          question: word,
+          correctAnswer: translation,
+          vocabulary: [{
+            word: word,
+            translation: translation,
+            pronunciation: vocab.pronunciation || vocab.notes || undefined,
+            tone: vocab.tone || undefined,
+          }],
+        });
+      }
+    }
+  }
+
+  // Convert quiz questions
+  if (content.quiz && Array.isArray(content.quiz)) {
+    for (const quiz of content.quiz) {
+      const question = quiz.question || quiz.prompt;
+      const correctAnswer = quiz.correctAnswer || quiz.answer;
+      if (!question || !correctAnswer) continue;
+
+      if (quiz.type === "multiple_choice" && Array.isArray(quiz.options) && quiz.options.length > 0) {
+        questions.push({
+          type: "multiple_choice",
+          question,
+          options: quiz.options,
+          correctAnswer,
+        });
+      } else {
+        questions.push({
+          type: "fill_in_blank",
+          question,
+          correctAnswer,
+        });
+      }
+    }
+  }
+
+  // Convert practice questions
+  if (content.practice && Array.isArray(content.practice)) {
+    for (const practice of content.practice) {
+      const question = practice.prompt || practice.question;
+      const correctAnswer = practice.answer || practice.correctAnswer;
+      if (!question || !correctAnswer) continue;
+
+      questions.push({
+        type: "fill_in_blank",
+        question,
+        correctAnswer,
+      });
+    }
+  }
+
+  // Convert examples to flashcards
+  if (content.examples && Array.isArray(content.examples)) {
+    for (const example of content.examples) {
+      if (example.hausa && example.english) {
+        questions.push({
+          type: "flashcard",
+          question: example.hausa,
+          correctAnswer: example.english,
+        });
+      }
+    }
+  }
+
+  return questions;
 }
