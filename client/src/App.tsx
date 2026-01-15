@@ -9,6 +9,8 @@ import { AppHeader } from "@/components/app-header";
 import { ThemeProvider } from "@/components/theme-provider";
 import { UserProvider } from "@/lib/user-context";
 import { ErrorBoundary } from "@/components/error-boundary";
+import { CookieConsentBanner } from "@/components/cookie-consent-banner";
+import { GoogleAnalytics } from "@/components/google-analytics";
 import Home from "@/pages/home";
 import Learn from "@/pages/learn";
 import Vocabulary from "@/pages/vocabulary";
@@ -141,7 +143,9 @@ function App() {
       <ThemeProvider defaultTheme="dark">
         <UserProvider>
           <TooltipProvider>
+            <GoogleAnalytics />
             <AppContent />
+            <CookieConsentBanner />
           </TooltipProvider>
         </UserProvider>
       </ThemeProvider>
