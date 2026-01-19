@@ -579,13 +579,13 @@ export const users = pgTable("users", {
 - **Nullable**: password (OAuth users), username (OAuth users)
 - **Indexes**: Automatic on unique columns
 
-#### `tracks` - Lesson Collections (e.g., "Travel Spanish")
+#### `tracks` - Lesson Collections (e.g., "Travel Hausa")
 ```typescript
 export const tracks = pgTable("tracks", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   name: text("name").notNull(),
   description: text("description").notNull(),
-  language: text("language").notNull().default("Spanish"),
+  language: text("language").notNull().default("Hausa"),
   icon: text("icon").notNull().default("Book"),
   order: integer("order").notNull().default(0),
   isLocked: boolean("is_locked").notNull().default(false),

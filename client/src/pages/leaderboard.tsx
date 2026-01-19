@@ -33,8 +33,8 @@ export default function Leaderboard() {
           <TabsTrigger value="global" data-testid="tab-global">
             Global
           </TabsTrigger>
-          <TabsTrigger value="spanish" data-testid="tab-spanish">
-            Spanish
+          <TabsTrigger value="hausa" data-testid="tab-hausa">
+            Hausa
           </TabsTrigger>
         </TabsList>
 
@@ -68,12 +68,12 @@ export default function Leaderboard() {
           )}
         </TabsContent>
 
-        <TabsContent value="spanish">
+        <TabsContent value="hausa">
           <Card>
             <CardContent className="flex min-h-64 flex-col items-center justify-center gap-2">
               <Trophy className="h-12 w-12 text-muted-foreground" />
               <p className="text-lg text-muted-foreground">
-                Complete more Spanish lessons to appear on this leaderboard
+                Complete more Hausa lessons to appear on this leaderboard
               </p>
             </CardContent>
           </Card>

@@ -60,7 +60,7 @@ export default function Contribute() {
     defaultValues: {
       name: "",
       description: "",
-      language: "Spanish",
+      language: "Hausa",
     },
   });
 
@@ -461,7 +461,7 @@ export default function Contribute() {
                       <FormItem>
                         <FormLabel>Track Name</FormLabel>
                         <FormControl>
-                          <Input placeholder="e.g., Business Spanish" {...field} data-testid="input-track-name" />
+                          <Input placeholder="e.g., Advanced Hausa" {...field} data-testid="input-track-name" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

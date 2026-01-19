@@ -1,0 +1,113 @@
+Your task is to generate a COMPLETE, VALIDATED curriculum in JSON format
+that can be inserted into a database via a seed script.
+
+TARGET LANGUAGE:
+- Hausa
+
+LEVEL:
+- A1 (Beginner)
+
+DESIGN PRINCIPLES:
+- Teach BEFORE quizzing
+- Short, focused lessons
+- Game-like progression (XP, levels)
+- Clear vocabulary explanations
+- Real-life usage examples
+
+OUTPUT FORMAT:
+Return ONLY valid JSON.
+Do NOT include explanations or markdown.
+Do NOT include comments.
+Do NOT include trailing commas.
+
+-----------------------------
+CURRICULUM STRUCTURE (STRICT)
+-----------------------------
+
+{
+  "language": "Hausa",
+  "level": "A1",
+  "tracks": [
+    {
+      "name": "Track name",
+      "order": 1,
+      "description": "Short description",
+      "lessons": [
+        {
+          "title": "Lesson title",
+          "order": 1,
+          "difficulty": "Easy | Medium",
+          "xpReward": 10,
+          "teachingContent": {
+            "introduction": "Brief explanation in simple English",
+            "vocabulary": [
+              {
+                "word": "Hausa word",
+                "translation": "English meaning",
+                "pronunciation": "Simple phonetic guide",
+                "partOfSpeech": "noun | verb | phrase",
+                "notes": "Optional cultural or usage note"
+              }
+            ],
+            "examples": [
+              {
+                "hausa": "Example sentence",
+                "english": "English translation"
+              }
+            ]
+          },
+          "practice": [
+            {
+              "type": "flashcard",
+              "prompt": "Prompt shown to learner",
+              "answer": "Correct answer"
+            }
+          ],
+          "quiz": [
+            {
+              "type": "multiple_choice",
+              "question": "Question text",
+              "options": ["Option A", "Option B", "Option C", "Option D"],
+              "correctAnswer": "One of the options"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+
+-----------------------------
+CONTENT REQUIREMENTS
+-----------------------------
+
+TRACKS TO INCLUDE (IN ORDER):
+1. Basics & Greetings
+2. Numbers & Counting
+3. Daily Phrases
+4. Pronouns & Simple Sentences
+5. Food & Ordering
+6. Directions & Travel
+
+RULES:
+- Each track must contain 3–5 lessons
+- Each lesson must include:
+  - teachingContent
+  - at least 3 vocabulary items
+  - at least 1 example sentence
+  - at least 1 practice item
+  - at least 2 quiz questions
+- Vocabulary must be reused across lessons when possible
+- Hausa language must be culturally accurate
+- Use simple, beginner-friendly English explanations
+- Avoid slang
+- Avoid advanced grammar
+
+-----------------------------
+IMPORTANT
+-----------------------------
+- Ensure all quizzes are answerable ONLY from the teaching content
+- Ensure correctAnswer always exists in options
+- Ensure JSON is syntactically valid
+
+BEGIN.
