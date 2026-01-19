@@ -67,9 +67,17 @@ export async function setupAuth(app: Express) {
 
   // Google OAuth Strategy
   if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
-    const callbackURL = process.env.NODE_ENV === 'production'
-      ? `https://${process.env.REPLIT_DOMAINS?.split(',')[0]}/api/auth/google/callback`
-      : 'http://localhost:5000/api/auth/google/callback';
+    // Use APP_URL for Docker/custom deployments, REPLIT_DOMAINS for Replit (dev or prod), or localhost
+    let callbackURL: string;
+    if (process.env.APP_URL) {
+      callbackURL = `${process.env.APP_URL}/api/auth/google/callback`;
+    } else if (process.env.REPLIT_DOMAINS) {
+      // Always use REPLIT_DOMAINS when available (both dev and prod on Replit)
+      callbackURL = `https://${process.env.REPLIT_DOMAINS.split(',')[0]}/api/auth/google/callback`;
+    } else {
+      callbackURL = 'http://localhost:5000/api/auth/google/callback';
+    }
+    console.log('Google OAuth callback URL:', callbackURL);
 
     passport.use(new GoogleStrategy({
       clientID: process.env.GOOGLE_CLIENT_ID,
@@ -89,9 +97,17 @@ export async function setupAuth(app: Express) {
 
   // Facebook OAuth Strategy
   if (process.env.FACEBOOK_APP_ID && process.env.FACEBOOK_APP_SECRET) {
-    const callbackURL = process.env.NODE_ENV === 'production'
-      ? `https://${process.env.REPLIT_DOMAINS?.split(',')[0]}/api/auth/facebook/callback`
-      : 'http://localhost:5000/api/auth/facebook/callback';
+    // Use APP_URL for Docker/custom deployments, REPLIT_DOMAINS for Replit (dev or prod), or localhost
+    let callbackURL: string;
+    if (process.env.APP_URL) {
+      callbackURL = `${process.env.APP_URL}/api/auth/facebook/callback`;
+    } else if (process.env.REPLIT_DOMAINS) {
+      // Always use REPLIT_DOMAINS when available (both dev and prod on Replit)
+      callbackURL = `https://${process.env.REPLIT_DOMAINS.split(',')[0]}/api/auth/facebook/callback`;
+    } else {
+      callbackURL = 'http://localhost:5000/api/auth/facebook/callback';
+    }
+    console.log('Facebook OAuth callback URL:', callbackURL);
 
     passport.use(new FacebookStrategy({
       clientID: process.env.FACEBOOK_APP_ID,
